@@ -1,0 +1,128 @@
+﻿@model FysioApp.Models.ApplicationUsers.Patient
+@using FysioApp.Models.ApplicationUsers
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+
+<form class="card" method="post" asp-action="Edit" enctype="multipart/form-data">
+    <div class="card-header">
+        <h2>
+            Gegevens Patient Bewerken
+        </h2>
+    </div>
+
+    <div class="card-body">
+        <div asp-validation-summary="ModelOnly" class="text-danger">
+        </div>
+        <div class="row">
+            <div class="col-md-9">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group row">
+                            <div class="col-md-4">
+                                <label asp-for="Email" class="form-label"></label>
+                            </div>
+                            <div class="col-md-8">
+                                <input asp-for="Email" class="form-control" />
+                            </div>
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-4">
+                                <label asp-for="FirstName" class="form-label"></label>
+                            </div>
+                            <div class="col-md-8">
+                                <input asp-for="FirstName" class="form-control" />
+                            </div>
+                            <span asp-validation-for="FirstName" class="text-danger"></span>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-4">
+                                <label asp-for="LastName" class="form-label"></label>
+                            </div>
+                            <div class="col-md-8">
+                                <input asp-for="LastName" class="form-control" />
+                            </div>
+                            <span asp-validation-for="LastName" class="text-danger"></span>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-4">
+                                <label class="form-label">Geboortedatum</label>
+                            </div>
+                            <div class="col-md-8">
+                                <input asp-for="DateOfBirth" type="date" class="form-control" />
+                            </div>
+                            <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-4">
+                                <label asp-for="Picture" class="control-label"></label>
+                            </div>
+                            <div class="col-md-8">
+                                <input type="file" id="projectImage" name="files" multiple class="form-control" />
+                            </div>
+                            <span asp-validation-for="Picture" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group row">
+                            <div class="col-md-4">
+                                <label class="form-label">Telefoonnummer</label>
+                            </div>
+                            <div class="col-md-8">
+                                <input asp-for="PhoneNumber" class="form-control" />
+                            </div>
+                            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-4">
+                                <label class="form-label">Avansnummer</label>
+                            </div>
+                            <div class="col-md-8">
+                                <input asp-for="AvansNumber" class="form-control" />
+                            </div>
+                            <span asp-validation-for="AvansNumber" class="text-danger"></span>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-4">
+                                <label class="control-label">Geslacht</label>
+                            </div>
+                            <div class="col-md-8">
+                                <select asp-for="Gender" asp-items="Html.GetEnumSelectList<Patient.EGender>()" class="form-control"></select>
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-4">
+                                <label asp-for="AvansRole" class="control-label"></label>
+                            </div>
+                            <div class="col-md-8">
+                                <select asp-for="AvansRole" asp-items="Html.GetEnumSelectList<Patient.EAvansRole>()" class="form-control"></select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                @{
+                    var base64 = Convert.ToBase64String(Model.Picture);
+                    var imgsrc = string.Format("data:image/jpg;base64,{0}", base64);
+                }
+                <img src="@imgsrc" class="rounded-circle" style="max-width:100%; box-shadow:0 5px 15px 0 rgba(0,0,0,5);"  />
+            </div>
+        </div>
+
+
+    </div>
+    <div class="card-footer">
+        <div class="btn-group">
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a asp-action="Index" class="btn btn-success">Back To List</a>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

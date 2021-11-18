@@ -1,0 +1,153 @@
+﻿@model FysioApp.Models.ApplicationUsers.Patient
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<div class="card">
+    <div class="card-header">
+        <h2>
+            Details van @Html.DisplayFor(model => model.FirstName) @Html.DisplayFor(model => model.LastName)
+        </h2>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header text-center">
+                        @{
+                            var base64 = Convert.ToBase64String(Model.Picture);
+                            var imgsrc = string.Format("data:image/jpg;base64,{0}", base64);
+                        }
+                        <img src="@imgsrc" class="rounded-circle" style="max-width: 60%; box-shadow: 0 5px 15px 0 rgba(0,0,0,5)" />
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                Patientnummer
+                            </div>
+                            <div class="col-md-8">
+                                <input asp-for="Id" class="form-control" disabled />
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-md-6">
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        @Html.DisplayNameFor(model => model.FirstName)
+                    </div>
+                    <div class="col-md-8">
+                        <input asp-for="FirstName" class="form-control" disabled />
+
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        @Html.DisplayNameFor(model => model.LastName)
+                    </div>
+                    <div class="col-md-8">
+                        <input asp-for="LastName" class="form-control" disabled />
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        @Html.DisplayNameFor(model => model.Email)
+                    </div>
+                    <div class="col-md-8">
+                        <input asp-for="Email" class="form-control" disabled />
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        Telefoonnummer
+                    </div>
+                    <div class="col-md-8">
+                        <input asp-for="PhoneNumber" class="form-control" disabled />
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        Geboortedatum
+                    </div>
+                    <div class="col-md-8">
+                        @{
+                            var date = Model.DateOfBirth.ToShortDateString();
+                        }
+                        <input value="@date" class="form-control" disabled />
+                    </div>
+                </div>
+                
+                    @if (Model.AvansRole == "0")
+                    {
+                        <div class="row form-group">
+                            <div class="col-md-4">
+                                Rol binnen Avans
+                            </div>
+                            <div class="col-md-8">
+                                <input value="Student" class="form-control" disabled />
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-4">
+                                Studentnummer
+                            </div>
+                            <div class="col-md-8">
+                                <input asp-for="AvansNumber" class="form-control" disabled />
+                            </div>
+                        </div>
+                    }
+                    @if (Model.AvansRole == "1")
+                    {
+                        <div class="row form-group">
+                            <div class="col-md-4">
+                                Rol binnen Avans
+                            </div>
+                            <div class="col-md-8">
+                                <input value="Docent" class="form-control" disabled />
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-4">
+                                Personeelsnummer
+                            </div>
+                            <div class="col-md-8">
+                                <input asp-for="AvansNumber" class="form-control" disabled />
+                            </div>
+                        </div>
+
+                    }
+                
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        Geslacht
+                    </div>
+                    <div class="col-md-8">
+                        @if (Model.Gender == "0")
+                        {
+                            <input value="Man" class="form-control" disabled />
+                        }
+                        @if (Model.Gender == "1")
+                        {
+                            <input value="Vrouw" class="form-control" disabled />
+                        }
+                        @if (Model.Gender == "2")
+                        {
+                            <input value="X" class="form-control" disabled />
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer">
+        <div class="btn-group">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary" type="button">Edit</a>
+            <a asp-action="Index" class="btn btn-success" type="button">Back To List</a>
+        </div>
+    </div>
+</div>
+

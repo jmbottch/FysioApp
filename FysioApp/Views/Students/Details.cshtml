@@ -1,0 +1,69 @@
+﻿@model FysioApp.Models.ApplicationUsers.Student
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<div class="card">
+    <div class="card-header">
+        <h2>
+            Details van @Html.DisplayFor(model => model.FirstName) @Html.DisplayFor(model => model.LastName)
+        </h2>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        @Html.DisplayNameFor(model => model.FirstName)
+                    </div>
+                    <div class="col-md-8">
+                        <input asp-for="FirstName" class="form-control" disabled />
+
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        @Html.DisplayNameFor(model => model.LastName)
+                    </div>
+                    <div class="col-md-8">
+                        <input asp-for="LastName" class="form-control" disabled />
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        @Html.DisplayNameFor(model => model.Email)
+                    </div>
+                    <div class="col-md-8">
+                        <input asp-for="Email" class="form-control" disabled />
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        @Html.DisplayNameFor(model => model.PhoneNumber)
+                    </div>
+                    <div class="col-md-8">
+                        <input asp-for="PhoneNumber" class="form-control" disabled />
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        @Html.DisplayNameFor(model => model.StudentNumber)
+                    </div>
+                    <div class="col-md-8">
+                        <input asp-for="StudentNumber" class="form-control" disabled />
+                    </div>
+                </div>                
+            </div>
+        </div>
+    </div>
+    <div class="card-footer">
+        <div class="btn-group">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary" type="button">Edit</a>
+            <a asp-action="Index" class="btn btn-success" type="button">Back To List</a>
+        </div>
+    </div>
+</div>
+

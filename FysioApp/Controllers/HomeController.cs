@@ -1,4 +1,5 @@
 ﻿using FysioApp.Models;
+using FysioApp.Utility;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -20,6 +21,10 @@ namespace FysioApp.Controllers
 
         public IActionResult Index()
         {
+            if(User.IsInRole(StaticDetails.PatientEndUser))
+            {
+                return RedirectToAction("Index", "Appointments");
+            }
             return View();
         }
 

@@ -1,0 +1,156 @@
+﻿@model FysioApp.Models.Appointment
+@using FysioApp.Utility
+@{
+    ViewData["Title"] = "Details";
+}
+
+@{ 
+    <script>
+        $(document).ready(function () {
+            if (@Model.IsCancelled.Equals("1")) {
+                $("#details-card").attr("class", "bg-danger")
+            }
+        })        
+    </script>
+}
+
+<div class="card" id="details-card" style="display:flex;">
+    <div class="card-header">
+        <h2>Details Afspraak</h2>
+    </div>
+    <div class="card-body row">
+        <div class="col-md-4" style="flex:1;">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Afspraak</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row form-group">
+                        <div class="col-md-4">
+                            <label class="control-label">
+                                Beschrijving
+                            </label>
+                        </div>
+                        <div class="col-md-8">
+                            <textarea asp-for="Description" disabled class="form-control" style="height:150px;"></textarea>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-md-4">
+                            <label class="control-label">
+                                Datum
+                            </label>
+                        </div>
+                        <div class="col-md-8">
+                            <input value="@Model.DateTime.ToShortDateString() @Model.DateTime.ToShortTimeString()" disabled class="form-control" />
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="col-md-4" style="flex:1;">
+            <div class="card" style="height:100%;">
+                <div class="card-header">
+                    <h4>Behandelaar</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row form-group">
+                        <div class="col-md-4">
+                            Naam
+                        </div>
+                        <div class="col-md-8">
+                            <input value="@Model.Teacher.FirstName @Model.Teacher.LastName " class="form-control" disabled />
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-md-4">
+                            Email
+                        </div>
+                        <div class="col-md-8">
+                            <input asp-for="Teacher.Email" class="form-control" disabled />
+                        </div>
+                    </div>
+
+                    <div class="row form-group">
+                        <div class="col-md-4">
+                            Personeelsnummer
+                        </div>
+                        <div class="col-md-8">
+                            <input asp-for="Teacher.EmployeeNumber" class="form-control" disabled />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4" style="flex:1;">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Patient</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row form-group">
+                        <div class="col-md-4">
+                            Naam
+                        </div>
+                        <div class="col-md-8">
+                            <input value="@Model.Patient.FirstName @Model.Patient.LastName" disabled class="form-control" />
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-md-4">
+                            Email
+                        </div>
+                        <div class="col-md-8">
+                            <input asp-for="Patient.Email" class="form-control" disabled />
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-md-4">
+                            Geslacht
+                        </div>
+                        <div class="col-md-8">
+                            <input asp-for="Patient.Gender" class="form-control" disabled />
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-md-4">
+                            Telefoon
+                        </div>
+                        <div class="col-md-8">
+                            <input value="@Model.Patient.PhoneNumber" class="form-control" disabled />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="btn-group">
+                    @if (User.IsInRole(StaticDetails.PatientEndUser) && @Model.DateTime.Subtract(DateTime.Now).TotalHours >= 24)
+                    {
+                        <form asp-action="Cancel">
+                            <input type="hidden" asp-for="Id" />
+                            <input type="submit" value="Annuleren" class="btn btn-danger" />
+                        </form>
+                    }
+                    @if (!User.IsInRole(StaticDetails.PatientEndUser))
+                    {
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a>
+                    }
+                    <a asp-action="Index" class="btn btn-success">Back To List</a>
+
+                </div>
+            </div>
+            <div class="col-md-8 text-right">
+                @if (User.IsInRole(StaticDetails.PatientEndUser) && Model.DateTime.Subtract(DateTime.Now).TotalHours <= 24 || Model.IsCancelled == true)
+                {
+                    <strong class="text-danger">Deze afspraak vindt binnen 24 uur plaats, <br/>het is niet meer mogelijk om deze online te wijzigen of te annuleren.</strong>
+                }
+            </div>
+        </div>
+        
+    </div>
+</div>

@@ -97,84 +97,42 @@ namespace FysioApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(RegisterPatientViewModel model, string returnUrl = null)
         {
-            returnUrl ??= Url.Content("~/");
             if (ModelState.IsValid)
             {
-                var identityPatient = new IdentityUser()
+                var patient = new Patient()
                 {
-                    UserName = model.Email,
-                    Email = model.Email
+                    Email = model.Email,
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    PhoneNumber = model.PhoneNumber,
+                    AvansNumber = model.AvansNumber,
+                    DateOfBirth = model.DateOfBirth,
+                    AvansRole = model.AvansRole,
+                    Gender = model.Gender
                 };
-
-
-
-                var result = await _userManager.CreateAsync(identityPatient, model.Password);
-                if (result.Succeeded)
+                var files = HttpContext.Request.Form.Files;
+                var lenghtExists = files.Any(x => x.Length > 0);
+                if (lenghtExists)
                 {
-                    _logger.LogInformation("Student has created a new account with password.");
-                    if (!await _roleManager.RoleExistsAsync(StaticDetails.TeacherEndUser))
+                    byte[] p1 = null;
+                    using (var fs1 = files[0].OpenReadStream())
                     {
-                        await _roleManager.CreateAsync(new IdentityRole(StaticDetails.TeacherEndUser));
-                    }
-                    if (!await _roleManager.RoleExistsAsync(StaticDetails.StudentEndUser))
-                    {
-                        await _roleManager.CreateAsync(new IdentityRole(StaticDetails.StudentEndUser));
-                    }
-                    if (!await _roleManager.RoleExistsAsync(StaticDetails.PatientEndUser))
-                    {
-                        await _roleManager.CreateAsync(new IdentityRole(StaticDetails.PatientEndUser));
-                    }
-
-                    await _userManager.AddToRoleAsync(identityPatient, StaticDetails.PatientEndUser);
-
-                    var patientFromDb = _identity.Users.Where(p => p.Email == model.Email).FirstOrDefault();
-                    var patient = new Patient()
-                    {
-                        Id = patientFromDb.Id,
-                        Email = model.Email,
-                        FirstName = model.FirstName,
-                        LastName = model.LastName,
-                        PhoneNumber = model.PhoneNumber,
-                        AvansNumber = model.AvansNumber,
-                        DateOfBirth = model.DateOfBirth,
-                        AvansRole = model.AvansRole,
-                        Gender = model.Gender
-                    };
-                    var files = HttpContext.Request.Form.Files;
-                    var lenghtExists = files.Any(x => x.Length > 0);
-                    if (lenghtExists)
-                    {
-                        byte[] p1 = null;
-                        using (var fs1 = files[0].OpenReadStream())
+                        using (var ms1 = new MemoryStream())
                         {
-                            using (var ms1 = new MemoryStream())
-                            {
-                                fs1.CopyTo(ms1);
-                                p1 = ms1.ToArray();
-                            }
+                            fs1.CopyTo(ms1);
+                            p1 = ms1.ToArray();
                         }
-
-                        patient.Picture = p1;
                     }
 
-                    _business.Patient.Add(patient);
-                    await _business.SaveChangesAsync();
+                    patient.Picture = p1;
 
-                    if (_userManager.Options.SignIn.RequireConfirmedAccount)
-                    {
-                        return RedirectToPage("RegisterConfirmation", new { email = model.Email, returnUrl = returnUrl });
-                    }
-                    else
-                    {
+                    
 
-                        await _signInManager.SignInAsync(identityPatient, isPersistent: false);
-                        return LocalRedirect(returnUrl);
-                    }
                 }
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                }
+                _business.Patient.Add(patient);
+                await _business.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+
             }
             return View();
         }
@@ -193,10 +151,10 @@ namespace FysioApp.Controllers
                 return NotFound();
             }
             var identityPatientFromDb = await _identity.Users.Where(i => i.Id == id).FirstOrDefaultAsync();
-            if(identityPatientFromDb == null)
+            if (identityPatientFromDb == null)
             {
                 return NotFound();
-            }           
+            }
             var patientFromDb = await _business.Patient.Where(t => t.Id == id).FirstOrDefaultAsync();
             if (patientFromDb == null)
             {

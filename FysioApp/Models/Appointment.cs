@@ -29,6 +29,9 @@ namespace FysioApp.Models
         [Display(Name = "Patient")]
         public string PatientId { get; set; }
 
+        [Display(Name ="Geannuleerd")]
+        public bool IsCancelled { get; set; }
+
         [ForeignKey("TeacherId")]
         public virtual Teacher Teacher { get; set; }
 

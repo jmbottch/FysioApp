@@ -1,0 +1,133 @@
+﻿@model FysioApp.Models.Appointment
+@{
+    ViewData["Title"] = "Details";
+}
+
+<div class="card" style="display:flex;">
+    <div class="card-header">
+        <div class="row">
+            <div class="col-md-8">
+                <h2>Details Afspraak</h2>
+            </div>
+            <div class="col-md-4 text-right">
+                <a type="button" class="btn btn-primary" asp-action="Create">Create</a>
+            </div>
+        </div>
+    </div>
+    <div class="card-body row">
+        <div class="col-md-4" style="flex:1;">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Afspraak</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row form-group">
+                        <div class="col-md-4">
+                            <label class="control-label">
+                                Beschrijving
+                            </label>
+                        </div>
+                        <div class="col-md-8">
+                            <textarea asp-for="Description" disabled class="form-control" style="height:150px;"></textarea>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-md-4">
+                            <label class="control-label">
+                                Datum
+                            </label>
+                        </div>
+                        <div class="col-md-8">
+                            <input value="@Model.DateTime.ToShortDateString() @Model.DateTime.ToShortTimeString()" disabled class="form-control" />
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="col-md-4" style="flex:1;">
+            <div class="card" style="height:100%;">
+                <div class="card-header">
+                    <h4>Behandelaar</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row form-group">
+                        <div class="col-md-4">
+                            Naam
+                        </div>
+                        <div class="col-md-8">
+                            <input value="@Model.Teacher.FirstName @Model.Teacher.LastName " class="form-control" disabled />
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-md-4">
+                            Email
+                        </div>
+                        <div class="col-md-8">
+                            <input asp-for="Teacher.Email" class="form-control" disabled />
+                        </div>
+                    </div>
+
+                    <div class="row form-group">
+                        <div class="col-md-4">
+                            Personeelsnummer
+                        </div>
+                        <div class="col-md-8">
+                            <input asp-for="Teacher.EmployeeNumber" class="form-control" disabled />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4" style="flex:1;">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Patient</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row form-group">
+                        <div class="col-md-4">
+                            Naam
+                        </div>
+                        <div class="col-md-8">
+                            <input value="@Model.Patient.FirstName @Model.Patient.LastName" disabled class="form-control" />
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-md-4">
+                            Email
+                        </div>
+                        <div class="col-md-8">
+                            <input asp-for="Patient.Email" class="form-control" disabled />
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-md-4">
+                            Geslacht
+                        </div>
+                        <div class="col-md-8">
+                            <input asp-for="Patient.Gender" class="form-control" disabled />
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-md-4">
+                            Telefoon
+                        </div>
+                        <div class="col-md-8">
+                            <input value="@Model.Patient.PhoneNumber" class="form-control" disabled />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer">
+        <form asp-action="Delete">
+            <div class="btn-group">
+                <input type="hidden" asp-for="Id" />
+                <input type="submit" value="Delete" class="btn btn-danger" />
+                <a asp-action="Index" class="btn btn-success" type="button">Back To List</a>
+            </div>
+        </form>
+    </div>
+</div>

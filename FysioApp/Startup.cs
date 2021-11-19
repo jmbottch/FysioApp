@@ -40,31 +40,8 @@ namespace FysioApp
             services.AddIdentity<IdentityUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders()
-                .AddDefaultUI();
-
-            services.AddIdentityCore<IdentityStudent>()
-                .AddRoles<IdentityRole>()
-                .AddClaimsPrincipalFactory<UserClaimsPrincipalFactory<IdentityStudent, IdentityRole>>()
-                .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddDefaultTokenProviders()
-                .AddTokenProvider<DataProtectorTokenProvider<IdentityStudent>>(TokenOptions.DefaultProvider)
-                .AddDefaultUI();
-
-            services.AddIdentityCore<IdentityTeacher>()
-                .AddRoles<IdentityRole>()
-                .AddClaimsPrincipalFactory<UserClaimsPrincipalFactory<IdentityTeacher, IdentityRole>>()
-                .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddDefaultTokenProviders()
-                .AddTokenProvider<DataProtectorTokenProvider<IdentityTeacher>>(TokenOptions.DefaultProvider)
-                .AddDefaultUI();
-
-            services.AddIdentityCore<IdentityPatient>()
-                .AddRoles<IdentityRole>()
-                .AddClaimsPrincipalFactory<UserClaimsPrincipalFactory<IdentityPatient, IdentityRole>>()
-                .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddDefaultTokenProviders()
-                .AddTokenProvider<DataProtectorTokenProvider<IdentityPatient>>(TokenOptions.DefaultProvider)
-                .AddDefaultUI();
+                .AddTokenProvider<DataProtectorTokenProvider<IdentityUser>>(TokenOptions.DefaultProvider)
+                .AddDefaultUI();            
 
             services.AddControllersWithViews();
         }

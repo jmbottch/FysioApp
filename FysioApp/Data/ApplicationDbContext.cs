@@ -12,10 +12,6 @@ namespace FysioApp.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
-        }
-
-        public DbSet<IdentityStudent> Student { get; set; }
-        public DbSet<IdentityTeacher> Teacher { get; set; }
-        public DbSet<IdentityPatient> Patient { get; set; }
+        }        
     }
 }

@@ -18,15 +18,15 @@ namespace FysioApp.Controllers
     {
         private readonly ApplicationDbContext _identity;
         private readonly BusinessDbContext _business;
-        private readonly SignInManager<IdentityTeacher> _signInManager;
-        private readonly UserManager<IdentityTeacher> _userManager;
+        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<IdentityUser> _userManager;
         private readonly ILogger<RegisterTeacherViewModel> _logger;
         private readonly RoleManager<IdentityRole> _roleManager;
 
         public TeachersController(
             ApplicationDbContext identity, 
-            SignInManager<IdentityTeacher> signInManager, 
-            UserManager<IdentityTeacher> userManager, 
+            SignInManager<IdentityUser> signInManager, 
+            UserManager<IdentityUser> userManager, 
             ILogger<RegisterTeacherViewModel> logger, 
             RoleManager<IdentityRole> roleManager,
             BusinessDbContext business
@@ -109,7 +109,7 @@ namespace FysioApp.Controllers
 
             if (ModelState.IsValid)
             {
-                IdentityTeacher identityTeacher = new IdentityTeacher()
+                IdentityUser identityTeacher = new IdentityUser()
                 {
                     UserName = model.Email,
                     Email = model.Email
@@ -134,7 +134,7 @@ namespace FysioApp.Controllers
                     }
 
                     await _userManager.AddToRoleAsync(identityTeacher, StaticDetails.TeacherEndUser);
-                    var teacherFromDb = await _identity.Teacher.Where(t => t.Email == model.Email).FirstOrDefaultAsync();
+                    var teacherFromDb = await _identity.Users.Where(t => t.Email == model.Email).FirstOrDefaultAsync();
                     var teacher = new Teacher()
                     {
                         Id = teacherFromDb.Id,
@@ -182,7 +182,7 @@ namespace FysioApp.Controllers
             {
                 return NotFound();
             }
-            var identityTeacherFromDb = await _identity.Teacher.Where(t => t.Id == id).FirstOrDefaultAsync();
+            var identityTeacherFromDb = await _identity.Users.Where(t => t.Id == id).FirstOrDefaultAsync();
             if(identityTeacherFromDb == null )
             {
                 return NotFound();
@@ -218,8 +218,8 @@ namespace FysioApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            var identityTeacher = await _identity.Teacher.SingleOrDefaultAsync(t => t.Id == id);
-            _identity.Teacher.Remove(identityTeacher);
+            var identityTeacher = await _identity.Users.SingleOrDefaultAsync(t => t.Id == id);
+            _identity.Users.Remove(identityTeacher);
             await _identity.SaveChangesAsync();
             var teacher = await _business.Teacher.SingleOrDefaultAsync(s => s.Id == id);
             _business.Teacher.Remove(teacher);

@@ -18,12 +18,12 @@ namespace FysioApp.Controllers
     {
         private readonly ApplicationDbContext _identity;
         private readonly BusinessDbContext _business;
-        private readonly SignInManager<IdentityPatient> _signInManager;
-        private readonly UserManager<IdentityPatient> _userManager;
+        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<IdentityUser> _userManager;
         private readonly ILogger<RegisterPatientViewModel> _logger;
         private readonly RoleManager<IdentityRole> _roleManager;
 
-        public PatientsController(ApplicationDbContext identity, BusinessDbContext business, SignInManager<IdentityPatient> signInManager, UserManager<IdentityPatient> userManager, ILogger<RegisterPatientViewModel> logger, RoleManager<IdentityRole> roleManager)
+        public PatientsController(ApplicationDbContext identity, BusinessDbContext business, SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager, ILogger<RegisterPatientViewModel> logger, RoleManager<IdentityRole> roleManager)
         {
             _identity = identity;
             _signInManager = signInManager;
@@ -100,7 +100,7 @@ namespace FysioApp.Controllers
             returnUrl ??= Url.Content("~/");
             if (ModelState.IsValid)
             {
-                var identityPatient = new IdentityPatient()
+                var identityPatient = new IdentityUser()
                 {
                     UserName = model.Email,
                     Email = model.Email
@@ -127,7 +127,7 @@ namespace FysioApp.Controllers
 
                     await _userManager.AddToRoleAsync(identityPatient, StaticDetails.PatientEndUser);
 
-                    var patientFromDb = _identity.Patient.Where(p => p.Email == model.Email).FirstOrDefault();
+                    var patientFromDb = _identity.Users.Where(p => p.Email == model.Email).FirstOrDefault();
                     var patient = new Patient()
                     {
                         Id = patientFromDb.Id,
@@ -192,7 +192,7 @@ namespace FysioApp.Controllers
             {
                 return NotFound();
             }
-            var identityPatientFromDb = await _identity.Patient.Where(i => i.Id == id).FirstOrDefaultAsync();
+            var identityPatientFromDb = await _identity.Users.Where(i => i.Id == id).FirstOrDefaultAsync();
             if(identityPatientFromDb == null)
             {
                 return NotFound();
@@ -246,8 +246,8 @@ namespace FysioApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            var patient = await _identity.Patient.SingleOrDefaultAsync(t => t.Id == id);
-            _identity.Patient.Remove(patient);
+            var patient = await _identity.Users.SingleOrDefaultAsync(t => t.Id == id);
+            _identity.Users.Remove(patient);
             await _identity.SaveChangesAsync();
             var businessPatient = await _business.Patient.SingleOrDefaultAsync(p => p.Id == id);
             _business.Patient.Remove(businessPatient);

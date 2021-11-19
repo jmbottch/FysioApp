@@ -17,15 +17,15 @@ namespace FysioApp.Controllers
     {
         private readonly ApplicationDbContext _identity;
         private readonly BusinessDbContext _business;
-        private readonly SignInManager<IdentityStudent> _signInManager;
-        private readonly UserManager<IdentityStudent> _userManager;
+        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<IdentityUser> _userManager;
         private readonly ILogger<RegisterStudentViewModel> _logger;
         private readonly RoleManager<IdentityRole> _roleManager;
 
         public StudentsController(
             ApplicationDbContext identity,
-            SignInManager<IdentityStudent> signInManager,
-            UserManager<IdentityStudent> userManager,
+            SignInManager<IdentityUser> signInManager,
+            UserManager<IdentityUser> userManager,
             ILogger<RegisterStudentViewModel> logger,
             RoleManager<IdentityRole> roleManager,
             BusinessDbContext business
@@ -109,7 +109,7 @@ namespace FysioApp.Controllers
             if (ModelState.IsValid)
             {
 
-                var identityStudent = new IdentityStudent()
+                var identityStudent = new IdentityUser()
                 {
                     UserName = model.Email,
                     Email = model.Email
@@ -134,7 +134,7 @@ namespace FysioApp.Controllers
 
                     await _userManager.AddToRoleAsync(identityStudent, StaticDetails.StudentEndUser);
 
-                    var studentFromDb = _identity.Student.Where(p => p.Email == model.Email).FirstOrDefault();
+                    var studentFromDb = _identity.Users.Where(p => p.Email == model.Email).FirstOrDefault();
                     var student = new Student()
                     {
                         Id = studentFromDb.Id,
@@ -178,7 +178,7 @@ namespace FysioApp.Controllers
             {
                 return NotFound();
             }
-            var identityStudentFromDb = await _identity.Student.Where(i => i.Id == id).FirstOrDefaultAsync();
+            var identityStudentFromDb = await _identity.Users.Where(i => i.Id == id).FirstOrDefaultAsync();
             if (identityStudentFromDb == null)
             {
                 return NotFound();
@@ -214,8 +214,8 @@ namespace FysioApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            var identityStudent = await _identity.Student.SingleOrDefaultAsync(t => t.Id == id);
-            _identity.Student.Remove(identityStudent);
+            var identityStudent = await _identity.Users.SingleOrDefaultAsync(t => t.Id == id);
+            _identity.Users.Remove(identityStudent);
             await _identity.SaveChangesAsync();
             var student = await _business.Student.SingleOrDefaultAsync(s => s.Id == id);
             _business.Student.Remove(student);

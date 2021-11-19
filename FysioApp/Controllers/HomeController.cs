@@ -20,11 +20,7 @@ namespace FysioApp.Controllers
         }
 
         public IActionResult Index()
-        {
-            if(User.IsInRole(StaticDetails.PatientEndUser))
-            {
-                return RedirectToAction("Index", "Appointments");
-            }
+        {            
             return View();
         }
 

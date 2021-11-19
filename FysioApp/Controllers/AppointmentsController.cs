@@ -44,6 +44,8 @@ namespace FysioApp.Controllers
         //Get for Create
         public IActionResult Create()
         {
+           
+
             CreateAppointmentViewModel CreateVM = new CreateAppointmentViewModel()
             {
                 Appointment = new Appointment()
@@ -53,6 +55,12 @@ namespace FysioApp.Controllers
                 Teachers = _business.Teacher.ToList(),
                 Patients = _business.Patient.ToList()
             };
+            if (User.IsInRole(StaticDetails.PatientEndUser))
+            {
+                var claimsIdentity = (ClaimsIdentity)this.User.Identity;
+                var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+                CreateVM.Appointment.PatientId = userId;
+            }
 
             return View(CreateVM);
         }

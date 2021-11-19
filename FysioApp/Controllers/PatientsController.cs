@@ -2,6 +2,7 @@
 using FysioApp.Models.ApplicationUsers;
 using FysioApp.Models.ViewModels.ApplicationUserViewModels;
 using FysioApp.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -61,6 +62,8 @@ namespace FysioApp.Controllers
         }
 
         //Get for Edit
+        [Authorize(Roles = StaticDetails.StudentEndUser)]
+        [Authorize(Roles = StaticDetails.TeacherEndUser)]
         public async Task<IActionResult> Edit(string id)
         {
             if (id == null)
@@ -95,6 +98,8 @@ namespace FysioApp.Controllers
         //POST for Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = StaticDetails.StudentEndUser)]
+        [Authorize(Roles = StaticDetails.TeacherEndUser)]
         public async Task<IActionResult> Create(RegisterPatientViewModel model, string returnUrl = null)
         {
             if (ModelState.IsValid)
@@ -138,6 +143,8 @@ namespace FysioApp.Controllers
         }
 
         //POST for Edit
+        [Authorize(Roles = StaticDetails.StudentEndUser)]
+        [Authorize(Roles = StaticDetails.TeacherEndUser)]
         [HttpPost, ActionName("Edit")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(string id, Patient patient)
@@ -200,6 +207,8 @@ namespace FysioApp.Controllers
         }
 
         //POST action for Delete
+        [Authorize(Roles = StaticDetails.StudentEndUser)]
+        [Authorize(Roles = StaticDetails.TeacherEndUser)]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)

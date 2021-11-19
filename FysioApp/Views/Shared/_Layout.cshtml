@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using FysioApp.Utility
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -21,17 +22,29 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-expanded="false">
-                                Admin
-                            </a>
-                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" asp-controller="Teachers" asp-action="Index">Docenten</a>
-                                <a class="dropdown-item" asp-controller="Students" asp-action="Index">Studenten</a>
-                                <a class="dropdown-item" asp-controller="Patients" asp-action="Index">Patienten</a>
-                                <a class="dropdown-item" asp-controller="Appointments" asp-action="Index">Afspraken</a>
-                            </div>
-                        </li>
+                        @if (User.IsInRole(StaticDetails.TeacherEndUser) || User.IsInRole(StaticDetails.StudentEndUser))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-expanded="false">
+                                    Admin
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <a class="dropdown-item" asp-controller="Teachers" asp-action="Index">Docenten</a>
+                                    <a class="dropdown-item" asp-controller="Students" asp-action="Index">Studenten</a>
+                                    <a class="dropdown-item" asp-controller="Patients" asp-action="Index">Patienten</a>
+                                    <a class="dropdown-item" asp-controller="Appointments" asp-action="Index">Afspraken</a>
+                                </div>
+                            </li>
+                        }
+                        @if (User.IsInRole(StaticDetails.PatientEndUser))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Appointments" asp-action="Index">Mijn Afspraken</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Home" asp-action="Index">Mijn Dossier</a>
+                            </li>
+                        }
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>

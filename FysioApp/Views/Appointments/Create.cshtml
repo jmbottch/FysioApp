@@ -50,8 +50,8 @@
                         <label class="control-label">Patient</label>
                     </div>
                     <div class="col-md-8">
-                        <select asp-for="Appointment.PatientId" class="form-control" asp-items="Model.Patients.ToSelectListItem(Model.Appointment.PatientId)">
-                        </select>
+                        <input asp-for="Appointment.PatientId" type="hidden" class="form-control"/>
+                        
                     </div>
                 </div>
             </div>

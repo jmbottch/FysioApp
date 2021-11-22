@@ -1,70 +1,145 @@
 ﻿@model FysioApp.Models.ViewModels.AppointmentViewModels.CreateAppointmentViewModel
 @using FysioApp.Extensions
+@using FysioApp.Utility
 
 @{
     ViewData["Title"] = "Create";
 }
+<div class="row">
+    @if(User.IsInRole(StaticDetails.PatientEndUser) || User.IsInRole(StaticDetails.TeacherEndUser))
+    {
+        <div class="col-md-3">
 
-<form asp-action="Create" class="card">
-    <div class="card-header">
-        <div class="row">
-            <div class="col-md-8">
-                <h2>Nieuwe Afspraak maken</h2>
-            </div>
         </div>
-    </div>
-    <div class="card-body">
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        <div class="row">
-            <div class="col-md-6">
-                <div class="row form-group">
-                    <div class="col-md-4">
-                        <label asp-for="Appointment.Description" class="control-label"></label>
-                    </div>
+    }
+    <div class="col-md-6">
+        <form asp-action="Create" class="card">
+            <div class="card-header">
+                <div class="row">
                     <div class="col-md-8">
-                        <input asp-for="Appointment.Description" class="form-control" />
+                        <h2>Nieuwe Afspraak maken</h2>
                     </div>
-                    <span asp-validation-for="Appointment.Description" class="text-danger"></span>
-                </div>
-                <div class="row form-group">
-                    <div class="col-md-4">
-                        <label asp-for="Appointment.DateTime" class="control-label"></label>
-                    </div>
-                    <div class="col-md-8">
-                        <input asp-for="Appointment.DateTime" type="datetime-local" class="form-control" />
-                    </div>
-                    <span asp-validation-for="Appointment.DateTime" class="text-danger"></span>
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="row form-group">
-                    <div class="col-md-4">
-                        <label class="control-label">Behandelaar</label>
-                    </div>
-                    <div class="col-md-8">
-                        <select asp-for="Appointment.TeacherId" class="form-control" asp-items="Model.Teachers.ToSelectListItem(Model.Appointment.TeacherId)"></select>
-                    </div>
-                </div>
-                <div class="row form-group">
-                    <div class="col-md-4">
-                        <label class="control-label">Patient</label>
-                    </div>
-                    <div class="col-md-8">
-                        <input asp-for="Appointment.PatientId" type="hidden" class="form-control"/>
+            <div class="card-body">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="row form-group">
+                            <div class="col-md-5">
+                                <label asp-for="Appointment.Description" class="control-label"></label>
+                            </div>
+                            <div class="col-md-7">
+                                <textarea style="height:150px;" asp-for="Appointment.Description" class="form-control"></textarea>
+                            </div>
+                            <span asp-validation-for="Appointment.Description" class="text-danger"></span>
+                        </div>                       
                         
                     </div>
+                    <div class="col-md-6">
+                        <div class="row form-group">
+                            <div class="col-md-5">
+                                <label class="control-label">Behandelaar</label>
+                            </div>
+                            <div class="col-md-7">
+                                <select asp-for="Appointment.StudentId" class="form-control" asp-items="Model.Students.ToSelectListItem(Model.Appointment.StudentId)"></select>
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            @if (User.IsInRole(StaticDetails.PatientEndUser))
+                            {
+                                <input asp-for="Appointment.PatientId" type="hidden" class="form-control" />
+                            }
+                            @if (User.IsInRole(StaticDetails.StudentEndUser) || User.IsInRole(StaticDetails.TeacherEndUser))
+                            {
+                                <div class="col-md-5">
+                                    <label class="control-label">Patient</label>
+                                </div>
+                                <div class="col-md-7">
+                                    <select asp-for="Appointment.PatientId" class="form-control" asp-items="Model.Patients.ToSelectListItem(Model.Appointment.PatientId)"></select>
+                                </div>
+                            }
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-5">
+                                <label asp-for="Appointment.DateTime" class="control-label"></label>
+                            </div>
+                            <div class="col-md-7">
+                                <input asp-for="Appointment.DateTime" type="datetime-local" class="form-control" />
+                            </div>
+                            <span asp-validation-for="Appointment.DateTime" class="text-danger"></span>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
+            <div class="card-footer">
+                <div class="btn-group">
+                    <input type="submit" value="Create" class="btn btn-primary" />
+                    <a class="btn btn-success" asp-action="Index">Back to List</a>
+                </div>
+            </div>
+        </form>
     </div>
-    <div class="card-footer">
-        <div class="btn-group">
-            <input type="submit" value="Create" class="btn btn-primary" />
-            <a class="btn btn-success" asp-action="Index">Back to List</a>
-        </div>
-    </div>
-</form>
+    @if(User.IsInRole(StaticDetails.StudentEndUser)) {
 
+    <div class="col-md-6">
+        <form asp-action="Create" class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-8">
+                        <h2>Nieuwe Afspraak met mij maken</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="row form-group">
+                            <div class="col-md-5">
+                                <label asp-for="Appointment.Description" class="control-label"></label>
+                            </div>
+                            <div class="col-md-7">
+                                <textarea style="height:150px;" asp-for="Appointment.Description" class="form-control"></textarea>
+                            </div>
+                            <span asp-validation-for="Appointment.Description" class="text-danger"></span>
+                        </div>
+                        
+                    </div>
+                    <div class="col-md-6">
+                        
+                        <input hidden asp-for="Appointment.StudentId"/>
+
+                        <div class="row form-group">
+                            <div class="col-md-5">
+                                <label class="control-label">Patient</label>
+                            </div>
+                            <div class="col-md-7">
+                                <select asp-for="Appointment.PatientId" class="form-control" asp-items="Model.Patients.ToSelectListItem(Model.Appointment.PatientId)"></select>
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-5">
+                                <label asp-for="Appointment.DateTime" class="control-label"></label>
+                            </div>
+                            <div class="col-md-7">
+                                <input asp-for="Appointment.DateTime" type="datetime-local" class="form-control" />
+                            </div>
+                            <span asp-validation-for="Appointment.DateTime" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="btn-group">
+                    <input type="submit" value="Create" class="btn btn-primary" />
+                    <a class="btn btn-success" asp-action="Index">Back to List</a>
+                </div>
+            </div>
+        </form>
+    </div>
+    }
+</div>
 
 
 @section Scripts {

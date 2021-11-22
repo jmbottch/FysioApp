@@ -10,7 +10,7 @@ namespace FysioApp.Models.ViewModels.AppointmentViewModels
     {
         public Appointment Appointment { get; set; }
 
-        public IEnumerable<Teacher> Teachers { get; set; }
+        public IEnumerable<Student> Students { get; set; }
         public IEnumerable<Patient> Patients { get; set; }
     }
 }

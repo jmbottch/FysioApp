@@ -30,21 +30,23 @@ namespace FysioApp.Controllers
         //GET for Index
         public async Task<IActionResult> Index()
         {
-            if(User.IsInRole(StaticDetails.PatientEndUser)) {
+            if (User.IsInRole(StaticDetails.PatientEndUser))
+            {
 
                 var claimsIdentity = (ClaimsIdentity)this.User.Identity;
                 var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
-                return View(await _business.Appointment.Where(a => a.PatientId == userId).Include(a => a.Teacher).Include(a => a.Patient).ToListAsync());
+                return View(await _business.Appointment.Where(a => a.PatientId == userId).Include(a => a.Student).Include(a => a.Patient).OrderBy(x => x.DateTime).ToListAsync());
 
             }
 
-            return View(await _business.Appointment.Include(a => a.Teacher).Include(a => a.Patient).ToListAsync());
+            return View(await _business.Appointment.Include(a => a.Student).Include(a => a.Patient).OrderBy(x => x.DateTime).ToListAsync());
         }
 
         //Get for Create
         public IActionResult Create()
         {
-           
+            var claimsIdentity = (ClaimsIdentity)this.User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
 
             CreateAppointmentViewModel CreateVM = new CreateAppointmentViewModel()
             {
@@ -52,14 +54,16 @@ namespace FysioApp.Controllers
                 {
                     DateTime = DateTime.Now
                 },
-                Teachers = _business.Teacher.ToList(),
+                Students = _business.Student.ToList(),
                 Patients = _business.Patient.ToList()
             };
             if (User.IsInRole(StaticDetails.PatientEndUser))
             {
-                var claimsIdentity = (ClaimsIdentity)this.User.Identity;
-                var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
                 CreateVM.Appointment.PatientId = userId;
+            }
+            if (User.IsInRole(StaticDetails.StudentEndUser))
+            {
+                CreateVM.Appointment.StudentId = userId;
             }
 
             return View(CreateVM);
@@ -67,8 +71,8 @@ namespace FysioApp.Controllers
 
         //Get for Details
         public async Task<IActionResult> Details(int id)
-        {           
-            var appointment = await _business.Appointment.Include(a => a.Teacher).Include(a => a.Patient).SingleOrDefaultAsync(t => t.Id == id);
+        {
+            var appointment = await _business.Appointment.Include(a => a.Student).Include(a => a.Patient).SingleOrDefaultAsync(t => t.Id == id);
             if (appointment == null)
             {
                 return NotFound();
@@ -79,7 +83,7 @@ namespace FysioApp.Controllers
         //Get for Edit
         public async Task<IActionResult> Edit(int id)
         {
-            var appointment = await _business.Appointment.Include(a => a.Teacher).Include(a => a.Patient).SingleOrDefaultAsync(t => t.Id == id);
+            var appointment = await _business.Appointment.Include(a => a.Student).Include(a => a.Patient).SingleOrDefaultAsync(t => t.Id == id);
             if (appointment == null)
             {
                 return NotFound();
@@ -87,7 +91,7 @@ namespace FysioApp.Controllers
             CreateAppointmentViewModel EditVM = new CreateAppointmentViewModel()
             {
                 Appointment = appointment,
-                Teachers = _business.Teacher.ToList(),
+                Students = _business.Student.ToList(),
                 Patients = _business.Patient.ToList()
             };
             return View(EditVM);
@@ -96,7 +100,7 @@ namespace FysioApp.Controllers
         //Get for Delete
         public async Task<IActionResult> Delete(int id)
         {
-            var appointment = await _business.Appointment.Include(a => a.Teacher).Include(a => a.Patient).SingleOrDefaultAsync(t => t.Id == id);
+            var appointment = await _business.Appointment.Include(a => a.Student).Include(a => a.Patient).SingleOrDefaultAsync(t => t.Id == id);
             if (appointment == null)
             {
                 return NotFound();
@@ -112,28 +116,36 @@ namespace FysioApp.Controllers
 
             if (ModelState.IsValid)
             {
-                var appointment = new Appointment()
+                if (model.Appointment.DateTime >= DateTime.Now)
                 {
-                    Description = model.Appointment.Description,
-                    DateTime = model.Appointment.DateTime,
-                    PatientId = model.Appointment.PatientId,
-                    TeacherId = model.Appointment.TeacherId,
-                    IsCancelled = false
-                };
+                    var appointment = new Appointment()
+                    {
+                        Description = model.Appointment.Description,
+                        DateTime = model.Appointment.DateTime,
+                        PatientId = model.Appointment.PatientId,
+                        StudentId = model.Appointment.StudentId,
+                        IsCancelled = false
+                    };
 
-                _business.Add(model.Appointment);
-                await _business.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                    _business.Add(model.Appointment);
+                    await _business.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                } else
+                {
+                    ModelState.AddModelError(string.Empty, "Datum moet in de toekomst liggen");
+                }                   
+
+                
             }
 
             CreateAppointmentViewModel modelVM = new CreateAppointmentViewModel()
             {
-                Teachers = _business.Teacher.ToList(),
+                Students = _business.Student.ToList(),
                 Patients = _business.Patient.ToList(),
                 Appointment = model.Appointment,
 
             };
-            return View(model);
+            return View(modelVM);
 
         }
 
@@ -142,16 +154,16 @@ namespace FysioApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(CreateAppointmentViewModel model)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 var appointmentFromDb = await _business.Appointment.FirstOrDefaultAsync(a => a.Id == model.Appointment.Id);
-                if(appointmentFromDb == null)
+                if (appointmentFromDb == null)
                 {
                     return NotFound();
                 }
                 appointmentFromDb.Description = model.Appointment.Description;
                 appointmentFromDb.DateTime = model.Appointment.DateTime;
-                appointmentFromDb.TeacherId = model.Appointment.TeacherId;
+                appointmentFromDb.StudentId = model.Appointment.StudentId;
                 appointmentFromDb.PatientId = model.Appointment.PatientId;
 
                 await _business.SaveChangesAsync();

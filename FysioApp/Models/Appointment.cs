@@ -18,12 +18,12 @@ namespace FysioApp.Models
         public string Description { get; set; }
 
         [Required]
-        [Display(Name = "Datum en Tijd")]
+        [Display(Name = "Datum en Tijd")]        
         public DateTime DateTime { get; set; }
 
         [Required]
         [Display(Name = "Behandelaar")]
-        public string TeacherId { get; set; }
+        public string StudentId { get; set; }
 
         [Required]
         [Display(Name = "Patient")]
@@ -32,8 +32,8 @@ namespace FysioApp.Models
         [Display(Name ="Geannuleerd")]
         public bool IsCancelled { get; set; }
 
-        [ForeignKey("TeacherId")]
-        public virtual Teacher Teacher { get; set; }
+        [ForeignKey("StudentId")]
+        public virtual Student Student { get; set; }
 
         [ForeignKey("PatientId")]
         public virtual Patient Patient { get; set; }

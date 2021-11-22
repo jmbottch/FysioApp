@@ -46,7 +46,7 @@
                             <label class="control-label">Behandelaar</label>
                         </div>
                         <div class="col-md-8">
-                            <select asp-for="Appointment.TeacherId" class="form-control" asp-items="Model.Teachers.ToSelectListItem(Model.Appointment.TeacherId)"></select>
+                            <select asp-for="Appointment.StudentId" class="form-control" asp-items="Model.Students.ToSelectListItem(Model.Appointment.StudentId)"></select>
                         </div>
                     </div>
                     <div class="row form-group">
@@ -109,7 +109,7 @@
                             <label class="control-label">Behandelaar</label>
                         </div>
                         <div class="col-md-8">
-                            <select asp-for="Appointment.TeacherId" class="form-control" asp-items="Model.Teachers.ToSelectListItem(Model.Appointment.TeacherId)"></select>
+                            <select asp-for="Appointment.StudentId" class="form-control" asp-items="Model.Students.ToSelectListItem(Model.Appointment.StudentId)"></select>
                         </div>
                     </div>
                     <input asp-for="Appointment.PatientId" type="hidden" />

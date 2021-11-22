@@ -108,7 +108,7 @@ namespace FysioApp.Areas.Identity.Pages.Account
                             await _roleManager.CreateAsync(new IdentityRole(StaticDetails.PatientEndUser));
                         }
 
-                        await _userManager.AddToRoleAsync(user, StaticDetails.StudentEndUser);
+                        await _userManager.AddToRoleAsync(user, StaticDetails.PatientEndUser);
 
                         var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                         code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));

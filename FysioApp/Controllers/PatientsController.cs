@@ -63,7 +63,7 @@ namespace FysioApp.Controllers
 
         //Get for Edit
         [Authorize(Roles = StaticDetails.StudentEndUser)]
-        [Authorize(Roles = StaticDetails.TeacherEndUser)]
+        //[Authorize(Roles = StaticDetails.TeacherEndUser)]
         public async Task<IActionResult> Edit(string id)
         {
             if (id == null)
@@ -99,7 +99,6 @@ namespace FysioApp.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = StaticDetails.StudentEndUser)]
-        [Authorize(Roles = StaticDetails.TeacherEndUser)]
         public async Task<IActionResult> Create(RegisterPatientViewModel model, string returnUrl = null)
         {
             if (ModelState.IsValid)
@@ -144,7 +143,6 @@ namespace FysioApp.Controllers
 
         //POST for Edit
         [Authorize(Roles = StaticDetails.StudentEndUser)]
-        [Authorize(Roles = StaticDetails.TeacherEndUser)]
         [HttpPost, ActionName("Edit")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(string id, Patient patient)
@@ -208,7 +206,6 @@ namespace FysioApp.Controllers
 
         //POST action for Delete
         [Authorize(Roles = StaticDetails.StudentEndUser)]
-        [Authorize(Roles = StaticDetails.TeacherEndUser)]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)

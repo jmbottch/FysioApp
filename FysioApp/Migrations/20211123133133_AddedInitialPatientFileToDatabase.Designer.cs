@@ -4,14 +4,16 @@ using FysioApp.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace FysioApp.Migrations
 {
     [DbContext(typeof(BusinessDbContext))]
-    partial class BusinessDbContextModelSnapshot : ModelSnapshot
+    [Migration("20211123133133_AddedInitialPatientFileToDatabase")]
+    partial class AddedInitialPatientFileToDatabase
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -167,9 +169,6 @@ namespace FysioApp.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("AmountOfSessionsPerWeek")
-                        .HasColumnType("int");
-
                     b.Property<string>("ComplaintsDescription")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -194,9 +193,6 @@ namespace FysioApp.Migrations
                     b.Property<string>("PatientId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<double>("SessionDuration")
-                        .HasColumnType("float");
 
                     b.Property<int>("age")
                         .HasColumnType("int");

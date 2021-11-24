@@ -1,0 +1,139 @@
+﻿@model FysioApp.Models.ViewModels.PatientFileViewModels.CreatePatientFileViewModel
+@using FysioApp.Extensions
+@using FysioApp.Utility
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<form asp-action="Edit" class="card">
+    <div class="card-header">
+        <h2>Dossier bewerken</h2>
+    </div>
+    <div class="card-body">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input asp-for="PatientFile.PatientId" class="form-control" hidden />
+        <input asp-for="PatientFile.Id" hidden />
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">Algemene Informatie</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <div class="text-center" style="width:100%;">
+                                <label>@Html.DisplayNameFor(item => Model.PatientFile.ComplaintsDescription)</label>
+                            </div>
+                            <div class="row">
+                                <textarea asp-for="PatientFile.ComplaintsDescription" class="form-control" style="height:150px;"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="col-md-6">
+                <div class="card" style="height:100%;">
+                    <div class="card-header">
+                        <h5 class="card-title">
+                            Behandelaren
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group row">
+                            <div class="col-md-4">
+                                <label asp-for="PatientFile.HeadPractitionerId"></label>
+                            </div>
+                            <div class="col-md-8">
+                                <select asp-for="PatientFile.HeadPractitionerId" class="form-control" asp-items="Model.Students.ToSelectListItem(Model.PatientFile.HeadPractitionerId)"></select>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col-md-4">
+                                <label asp-for="PatientFile.IntakeDoneById"></label>
+                            </div>
+                            <div class="col-md-8">
+                                <select asp-for="PatientFile.IntakeDoneById" class="form-control" asp-items="Model.Students.ToSelectListItem(Model.PatientFile.IntakeDoneById)"></select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-4">
+                                <label asp-for="PatientFile.IntakeSupervisedById"></label>
+                            </div>
+                            <div class="col-md-8">
+                                <select asp-for="PatientFile.IntakeSupervisedById" class="form-control" asp-items="Model.Teachers.ToSelectListItem(Model.PatientFile.IntakeSupervisedById)"></select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">
+                            Data
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group row">
+                            <div class="col-md-4">
+                                <label asp-for="PatientFile.DateOfArrival"></label>
+                            </div>
+                            <div class="col-md-8">
+                                <input type="date" asp-for="PatientFile.DateOfArrival" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-4">
+                                <label asp-for="PatientFile.DateOfDeparture"></label>
+                            </div>
+                            <div class="col-md-8">
+                                <input type="date" asp-for="PatientFile.DateOfDeparture" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">Behandelplan</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group row">
+                            <div class="col-md-4">
+                                <label asp-for="PatientFile.AmountOfSessionsPerWeek"></label>
+                            </div>
+                            <div class="col-md-8">
+                                <input type="number" asp-for="PatientFile.AmountOfSessionsPerWeek" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-4">
+                                <label asp-for="PatientFile.SessionDuration"></label>
+                            </div>
+                            <div class="col-md-8">
+                                <input type="number" asp-for="PatientFile.SessionDuration" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer">
+        <div class="btn-group">
+            <input type="submit" value="Opslaan" class="btn btn-primary" />
+            <a class="btn btn-success" asp-action="Index">Terug</a>
+        </div>
+    </div>
+</form>
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,55 @@
+﻿@model IEnumerable<FysioApp.Models.PatientFile>
+
+<div class="card">
+    <div class="card-header">
+        <div class="row">
+            <div class="col-md-8">
+                <h2>Patientdossiers</h2>
+            </div>
+            <div class="col-md-4 text-right">
+                <a type="button" class="btn btn-primary" asp-action="Create">Create</a>
+            </div>
+        </div>
+        
+    </div>
+    <div class="card-body">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>
+                        Patient
+                    </th>
+                    <th>
+                        Hoofdbehandelaar
+                    </th>
+                    <th>
+                        Leeftijd
+                    </th>
+                    <th>
+
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Patient.FirstName) @Html.DisplayFor(modelItem => item.Patient.LastName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.HeadPractitioner.FirstName) @Html.DisplayFor(modelItem => item.HeadPractitioner.LastName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.age)
+                        </td>
+                        <td>
+                            <partial name="_TableButtonPartialForInt" model="@item.Id" />
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+

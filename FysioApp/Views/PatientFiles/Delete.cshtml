@@ -1,0 +1,165 @@
+﻿@model FysioApp.Models.PatientFile
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<div class="card">
+    <div class="card-header">
+        <h2>Patientdossier</h2>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card" style="height:100%;">
+                    <div class="card-header">
+                        <h4>Persoonlijke gegevens</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="text-center">
+                            @if (Model.Patient.Picture != null)
+                            {
+                                var base64 = Convert.ToBase64String(Model.Patient.Picture);
+                                var imgsrc = string.Format("data:image/jpg;base64,{0}", base64);
+
+                                <img src="@imgsrc" class="rounded-circle" style="width: 60%; height:200px; box-shadow: 0 5px 15px 0 rgba(0,0,0,5)" />
+                            }
+                            @if (Model.Patient.Picture == null)
+                            {
+                                @if (Model.Patient.Gender == "0")
+                                {
+                                    <img src="~/images/male.jpg" class="rounded-circle" style="width:60%; height:200px; box-shadow:0 5px 15px 0 rgba(0,0,0,5);" />
+                                }
+                                @if (Model.Patient.Gender == "1")
+                                {
+                                    <img src="~/images/female.jpg" class="rounded-circle" style="width:60%; height:200px; box-shadow:0 5px 15px 0 rgba(0,0,0,5);" />
+                                }
+                            }
+                        </div>
+                        <hr />
+                        <div class="form-group row">
+                            <div class="col-md-4">
+                                <label>Patient</label>
+                            </div>
+                            <div class="col-md-8">
+                                <input value="@Model.Patient.FirstName @Model.Patient.LastName" class="form-control" disabled />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-4">
+                                <label>Leeftijd (jaren)</label>
+                            </div>
+                            <div class="col-md-8">
+                                <input asp-for="age" class="form-control" disabled />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-4">
+                                <label>Geslacht</label>
+                            </div>
+                            <div class="col-md-8">
+                                @if (Model.Patient.Gender == "0")
+                                {
+                                    <input value="Man" class="form-control" disabled />
+                                }
+                                @if (Model.Patient.Gender == "1")
+                                {
+                                    <input value="Vrouw" class="form-control" disabled />
+                                }
+                                @if (Model.Patient.Gender == "2")
+                                {
+                                    <input value="X" class="form-control" disabled />
+                                }
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-4">
+                                Rol binnen Avans
+                            </div>
+                            <div class="col-md-8">
+                                @if (Model.Patient.AvansRole == "0")
+                                {
+                                    <input value="Student" class="form-control" disabled />
+                                }
+                                @if (Model.Patient.AvansRole == "1")
+                                {
+                                    <input value="Docent" class="form-control" disabled />
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="row card" style="width:100%;">
+                    <div class="card-header">
+                        <h4>Praktische Informatie</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group row">
+                            <div class="col-md-4">
+                                <label>Datum aanmelding</label>
+                            </div>
+                            <div class="col-md-8">
+                                <input asp-for="DateOfArrival.Date" class="form-control" disabled />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-4">
+                                <label>Hoofdbehandelaar</label>
+                            </div>
+                            <div class="col-md-8">
+                                <input value="@Model.HeadPractitioner.FirstName @Model.HeadPractitioner.LastName" class="form-control" disabled />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-4">
+                                <label>Uitgevoerd door</label>
+                            </div>
+                            <div class="col-md-8">
+                                <input value="@Model.IntakeDoneBy.FirstName @Model.IntakeDoneBy.LastName" class="form-control" disabled />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-4">
+                                <label>Onder toezicht van</label>
+                            </div>
+                            <div class="col-md-8">
+                                <input value="@Model.IntakeSupervisedBy.FirstName @Model.IntakeSupervisedBy.LastName" class="form-control" disabled />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-4">
+                                <label>Voorlopige Ontslagdatum</label>
+                            </div>
+                            <div class="col-md-8">
+                                <input value="@Model.DateOfDeparture.Date" class="form-control" disabled />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-2 card" style="width:100%;">
+                    <div class="card-header">
+                        <h4>Omschrijving klachten</h4>
+                    </div>
+                    <div class="card-body">
+                        <p>@Model.ComplaintsDescription</p>
+                    </div>
+                </div>
+            </div>
+
+
+
+        </div>
+    </div>
+    <div class="card-footer">
+        <form asp-action="Delete">
+            <div class="btn-group">
+                <input type="hidden" asp-for="Id" />
+                <input type="submit" value="Delete" class="btn btn-danger" />
+                <a asp-action="Index" class="btn btn-success" type="button">Back To List</a>
+            </div>
+        </form>
+    </div>
+</div>
+

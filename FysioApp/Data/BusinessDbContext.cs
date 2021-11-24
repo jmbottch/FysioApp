@@ -20,5 +20,6 @@ namespace FysioApp.Data
         public DbSet<Student> Student { get; set; }
         public DbSet<Teacher> Teacher { get; set; }
         public DbSet<Patient> Patient { get; set; }
+        public DbSet<PatientFile> PatientFile { get; set; }
     }
 }

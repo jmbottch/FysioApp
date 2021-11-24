@@ -127,7 +127,7 @@ namespace FysioApp.Controllers
                         IsCancelled = false
                     };
 
-                    _business.Add(model.Appointment);
+                    _business.Appointment.Add(model.Appointment);
                     await _business.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
                 } else

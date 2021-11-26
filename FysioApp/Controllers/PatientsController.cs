@@ -1,4 +1,5 @@
-﻿using FysioApp.Data;
+﻿using FysioApp.Abstractions;
+using FysioApp.Data;
 using FysioApp.Models.ApplicationUsers;
 using FysioApp.Models.ViewModels.ApplicationUserViewModels;
 using FysioApp.Utility;
@@ -17,26 +18,27 @@ namespace FysioApp.Controllers
 {
     public class PatientsController : Controller
     {
-        private readonly ApplicationDbContext _identity;
-        private readonly BusinessDbContext _business;
+        private readonly IPatientRepository _patientRepository;
+        private readonly IIdentityUserRepository _identityUserRepository;
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly ILogger<RegisterPatientViewModel> _logger;
         private readonly RoleManager<IdentityRole> _roleManager;
 
-        public PatientsController(ApplicationDbContext identity, BusinessDbContext business, SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager, ILogger<RegisterPatientViewModel> logger, RoleManager<IdentityRole> roleManager)
+        public PatientsController(IIdentityUserRepository identityUserRepository, IPatientRepository patientRepository, SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager, ILogger<RegisterPatientViewModel> logger, RoleManager<IdentityRole> roleManager)
         {
-            _identity = identity;
+            
             _signInManager = signInManager;
             _userManager = userManager;
             _logger = logger;
             _roleManager = roleManager;
-            _business = business;
+            _patientRepository = patientRepository;
+            _identityUserRepository = identityUserRepository;
         }
         //GET For Index
         public async Task<IActionResult> Index()
         {
-            return View(await _business.Patient.ToListAsync());
+            return View(await _patientRepository.GetPatients().ToListAsync());
         }
 
         //GET for Create
@@ -53,7 +55,7 @@ namespace FysioApp.Controllers
                 return NotFound();
             }
 
-            var patient = await _business.Patient.SingleOrDefaultAsync(t => t.Id == id);
+            Patient patient = await _patientRepository.GetPatient(id).FirstOrDefaultAsync();
             if (patient == null)
             {
                 return NotFound();
@@ -71,7 +73,7 @@ namespace FysioApp.Controllers
                 return NotFound();
             }
 
-            var patient = await _business.Patient.SingleOrDefaultAsync(t => t.Id == id);
+            Patient patient = await _patientRepository.GetPatient(id).FirstOrDefaultAsync();
             if (patient == null)
             {
                 return NotFound();
@@ -87,7 +89,7 @@ namespace FysioApp.Controllers
                 return NotFound();
             }
 
-            var patient = await _business.Patient.SingleOrDefaultAsync(t => t.Id == id);
+            Patient patient = await _patientRepository.GetPatient(id).FirstOrDefaultAsync();
             if (patient == null)
             {
                 return NotFound();
@@ -133,8 +135,9 @@ namespace FysioApp.Controllers
                     
 
                 }
-                _business.Patient.Add(patient);
-                await _business.SaveChangesAsync();
+                _patientRepository.CreatePatient(patient);
+                _patientRepository.Save();
+
                 return RedirectToAction(nameof(Index));
 
             }
@@ -155,12 +158,12 @@ namespace FysioApp.Controllers
             {
                 return NotFound();
             }
-            var identityPatientFromDb = await _identity.Users.Where(i => i.Id == id).FirstOrDefaultAsync();
+            IdentityUser identityPatientFromDb = await _identityUserRepository.GetUser(id).FirstOrDefaultAsync();
             if (identityPatientFromDb == null)
             {
                 return NotFound();
             }
-            var patientFromDb = await _business.Patient.Where(t => t.Id == id).FirstOrDefaultAsync();
+            Patient patientFromDb = await _patientRepository.GetPatient(id).FirstOrDefaultAsync();
             if (patientFromDb == null)
             {
                 return NotFound();
@@ -197,8 +200,8 @@ namespace FysioApp.Controllers
 
                     patientFromDb.Picture = p1;
                 }
-                await _business.SaveChangesAsync();
-                await _identity.SaveChangesAsync();
+                _patientRepository.Save();
+                _identityUserRepository.Save();
                 return RedirectToAction(nameof(Index));
             }
             return View(patient);
@@ -210,12 +213,11 @@ namespace FysioApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            var patient = await _identity.Users.SingleOrDefaultAsync(t => t.Id == id);
-            _identity.Users.Remove(patient);
-            await _identity.SaveChangesAsync();
-            var businessPatient = await _business.Patient.SingleOrDefaultAsync(p => p.Id == id);
-            _business.Patient.Remove(businessPatient);
-            await _business.SaveChangesAsync();
+            _identityUserRepository.DeleteUser(id);
+            _identityUserRepository.Save();
+            _patientRepository.DeletePatient(id);
+            _patientRepository.Save();
+           
             return RedirectToAction(nameof(Index));
         }
     }

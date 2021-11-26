@@ -1,4 +1,5 @@
-﻿using FysioApp.Data;
+﻿using FysioApp.Abstractions;
+using FysioApp.Data;
 using FysioApp.Models;
 using FysioApp.Models.ApplicationUsers;
 using FysioApp.Models.ViewModels.AppointmentViewModels;
@@ -17,13 +18,25 @@ namespace FysioApp.Controllers
 {
     public class AppointmentsController : Controller
     {
-        private readonly ApplicationDbContext _identity;
-        private readonly BusinessDbContext _business;
+        private readonly IAppointmentRepository _appointmentRepository;
+        private readonly IStudentRepostitory _studentRepository;
+        private readonly ITeacherRepository _teacherRepository;
+        private readonly IIdentityUserRepository _identityUserRepository;
+        private readonly IPatientRepository _patientRepository;
 
-        public AppointmentsController(ApplicationDbContext identity, BusinessDbContext business)
+        public AppointmentsController(
+            IAppointmentRepository appointmentRepository, 
+            IIdentityUserRepository identityUserRepository,
+            IStudentRepostitory studentRepostitory,
+            IPatientRepository patientRepository,
+            ITeacherRepository teacherRepository
+            )
         {
-            _identity = identity;
-            _business = business;
+            _appointmentRepository = appointmentRepository;
+            _identityUserRepository = identityUserRepository;
+            _studentRepository = studentRepostitory;
+            _teacherRepository = teacherRepository;
+            _patientRepository = patientRepository;
 
         }
 
@@ -35,11 +48,11 @@ namespace FysioApp.Controllers
 
                 var claimsIdentity = (ClaimsIdentity)this.User.Identity;
                 var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
-                return View(await _business.Appointment.Where(a => a.PatientId == userId).Include(a => a.Student).Include(a => a.Patient).OrderBy(x => x.DateTime).ToListAsync());
+                return View(await _appointmentRepository.GetAppointmentsByPatientId(userId).ToListAsync());
 
             }
 
-            return View(await _business.Appointment.Include(a => a.Student).Include(a => a.Patient).OrderBy(x => x.DateTime).ToListAsync());
+            return View(await _appointmentRepository.GetAppointments().ToListAsync());
         }
 
         //Get for Create
@@ -54,8 +67,8 @@ namespace FysioApp.Controllers
                 {
                     DateTime = DateTime.Now
                 },
-                Students = _business.Student.ToList(),
-                Patients = _business.Patient.ToList()
+                Students = _studentRepository.GetStudents().ToList(),
+                Patients = _patientRepository.GetPatients().ToList()
             };
             if (User.IsInRole(StaticDetails.PatientEndUser))
             {
@@ -72,7 +85,7 @@ namespace FysioApp.Controllers
         //Get for Details
         public async Task<IActionResult> Details(int id)
         {
-            var appointment = await _business.Appointment.Include(a => a.Student).Include(a => a.Patient).SingleOrDefaultAsync(t => t.Id == id);
+            Appointment appointment = await _appointmentRepository.GetAppointment(id).FirstOrDefaultAsync();
             if (appointment == null)
             {
                 return NotFound();
@@ -83,7 +96,7 @@ namespace FysioApp.Controllers
         //Get for Edit
         public async Task<IActionResult> Edit(int id)
         {
-            var appointment = await _business.Appointment.Include(a => a.Student).Include(a => a.Patient).SingleOrDefaultAsync(t => t.Id == id);
+            Appointment appointment = await _appointmentRepository.GetAppointment(id).FirstOrDefaultAsync();
             if (appointment == null)
             {
                 return NotFound();
@@ -91,8 +104,8 @@ namespace FysioApp.Controllers
             CreateAppointmentViewModel EditVM = new CreateAppointmentViewModel()
             {
                 Appointment = appointment,
-                Students = _business.Student.ToList(),
-                Patients = _business.Patient.ToList()
+                Students = _studentRepository.GetStudents().ToList(),
+                Patients = _patientRepository.GetPatients().ToList()
             };
             return View(EditVM);
         }
@@ -100,7 +113,7 @@ namespace FysioApp.Controllers
         //Get for Delete
         public async Task<IActionResult> Delete(int id)
         {
-            var appointment = await _business.Appointment.Include(a => a.Student).Include(a => a.Patient).SingleOrDefaultAsync(t => t.Id == id);
+            Appointment appointment = await _appointmentRepository.GetAppointment(id).FirstOrDefaultAsync();
             if (appointment == null)
             {
                 return NotFound();
@@ -127,8 +140,8 @@ namespace FysioApp.Controllers
                         IsCancelled = false
                     };
 
-                    _business.Appointment.Add(model.Appointment);
-                    await _business.SaveChangesAsync();
+                    _appointmentRepository.CreateAppointment(appointment);
+                    _appointmentRepository.Save();
                     return RedirectToAction(nameof(Index));
                 } else
                 {
@@ -139,10 +152,10 @@ namespace FysioApp.Controllers
             }
 
             CreateAppointmentViewModel modelVM = new CreateAppointmentViewModel()
-            {
-                Students = _business.Student.ToList(),
-                Patients = _business.Patient.ToList(),
-                Appointment = model.Appointment,
+            {                
+                Students = _studentRepository.GetStudents().ToList(),
+                Patients = _patientRepository.GetPatients().ToList(),
+                Appointment = model.Appointment
 
             };
             return View(modelVM);
@@ -156,7 +169,7 @@ namespace FysioApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                var appointmentFromDb = await _business.Appointment.FirstOrDefaultAsync(a => a.Id == model.Appointment.Id);
+                Appointment appointmentFromDb = await _appointmentRepository.GetAppointment(model.Appointment.Id).FirstOrDefaultAsync();
                 if (appointmentFromDb == null)
                 {
                     return NotFound();
@@ -166,7 +179,7 @@ namespace FysioApp.Controllers
                 appointmentFromDb.StudentId = model.Appointment.StudentId;
                 appointmentFromDb.PatientId = model.Appointment.PatientId;
 
-                await _business.SaveChangesAsync();
+                _appointmentRepository.Save();
                 return RedirectToAction(nameof(Index));
 
             }
@@ -178,9 +191,10 @@ namespace FysioApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Cancel(int id)
         {
-            var appointment = await _business.Appointment.SingleOrDefaultAsync(a => a.Id == id);
+
+            Appointment appointment = await _appointmentRepository.GetAppointment(id).FirstOrDefaultAsync();
             appointment.IsCancelled = true;
-            await _business.SaveChangesAsync();
+            _appointmentRepository.Save();
             return RedirectToAction(nameof(Index));
         }
 
@@ -189,9 +203,8 @@ namespace FysioApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var appointment = await _business.Appointment.SingleOrDefaultAsync(a => a.Id == id);
-            _business.Remove(appointment);
-            await _business.SaveChangesAsync();
+            _appointmentRepository.DeleteAppointment(id);
+            _appointmentRepository.Save();           
             return RedirectToAction(nameof(Index));
         }
     }

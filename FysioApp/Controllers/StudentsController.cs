@@ -1,6 +1,8 @@
-﻿using FysioApp.Data;
+﻿using FysioApp.Abstractions;
+using FysioApp.Data;
 using FysioApp.Models.ApplicationUsers;
 using FysioApp.Models.ViewModels.ApplicationUserViewModels;
+using FysioApp.Repositories;
 using FysioApp.Utility;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -15,34 +17,35 @@ namespace FysioApp.Controllers
 {
     public class StudentsController : Controller
     {
-        private readonly ApplicationDbContext _identity;
-        private readonly BusinessDbContext _business;
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly ILogger<RegisterStudentViewModel> _logger;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IStudentRepostitory _studentRepository;
+        private readonly IIdentityUserRepository _identityUserRepository;
 
         public StudentsController(
-            ApplicationDbContext identity,
+            IStudentRepostitory studentRepository,
+            IIdentityUserRepository identityUserRepository,            
             SignInManager<IdentityUser> signInManager,
             UserManager<IdentityUser> userManager,
             ILogger<RegisterStudentViewModel> logger,
-            RoleManager<IdentityRole> roleManager,
-            BusinessDbContext business
+            RoleManager<IdentityRole> roleManager          
             )
-        {
-            _business = business;
-            _identity = identity;
+        {            
             _signInManager = signInManager;
             _userManager = userManager;
             _logger = logger;
             _roleManager = roleManager;
+            _studentRepository = studentRepository;
+            _identityUserRepository = identityUserRepository;
+
         }
 
         //GET for Index
         public async Task<IActionResult> Index()
         {
-            return View(await _business.Student.ToListAsync());
+            return View(await _studentRepository.GetStudents().ToListAsync());
         }
 
         //GET for Create
@@ -58,13 +61,13 @@ namespace FysioApp.Controllers
             {
                 return NotFound();
             }
-
-            var student = await _business.Student.SingleOrDefaultAsync(t => t.Id == id);
-            if (student == null)
+            var student = await _studentRepository.GetStudent(id).FirstOrDefaultAsync();
+            if(student == null)
             {
                 return NotFound();
             }
             return View(student);
+            
         }
 
         //Get for Edit
@@ -75,7 +78,7 @@ namespace FysioApp.Controllers
                 return NotFound();
             }
 
-            var student = await _business.Student.SingleOrDefaultAsync(t => t.Id == id);
+            var student = await _studentRepository.GetStudent(id).FirstOrDefaultAsync();
             if (student == null)
             {
                 return NotFound();
@@ -91,7 +94,7 @@ namespace FysioApp.Controllers
                 return NotFound();
             }
 
-            var student = await _business.Student.SingleOrDefaultAsync(t => t.Id == id);
+            var student = await _studentRepository.GetStudent(id).FirstOrDefaultAsync();
             if (student == null)
             {
                 return NotFound();
@@ -134,18 +137,18 @@ namespace FysioApp.Controllers
 
                     await _userManager.AddToRoleAsync(identityStudent, StaticDetails.StudentEndUser);
 
-                    var studentFromDb = _identity.Users.Where(p => p.Email == model.Email).FirstOrDefault();
+                    IdentityUser identityStudentFromDb = _identityUserRepository.GetUserByEmail(model.Email).FirstOrDefault();
                     var student = new Student()
                     {
-                        Id = studentFromDb.Id,
+                        Id = identityStudentFromDb.Id,
                         Email = model.Email,
                         FirstName = model.FirstName,
                         LastName = model.LastName,
                         PhoneNumber = model.PhoneNumber,
                         StudentNumber = model.StudentNumber
                     };
-                    _business.Student.Add(student);
-                    await _business.SaveChangesAsync();
+                    _studentRepository.CreateStudent(student);
+                    _studentRepository.Save();
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {
@@ -178,12 +181,12 @@ namespace FysioApp.Controllers
             {
                 return NotFound();
             }
-            var identityStudentFromDb = await _identity.Users.Where(i => i.Id == id).FirstOrDefaultAsync();
+            IdentityUser identityStudentFromDb = await _identityUserRepository.GetUser(id).FirstOrDefaultAsync();
             if (identityStudentFromDb == null)
             {
                 return NotFound();
-            }            
-            var studentFromDb = await _business.Student.Where(t => t.Id == id).FirstOrDefaultAsync();
+            }
+            Student studentFromDb = await _studentRepository.GetStudent(id).FirstOrDefaultAsync();
             if (studentFromDb == null)
             {
                 return NotFound();
@@ -202,8 +205,8 @@ namespace FysioApp.Controllers
                 studentFromDb.StudentNumber = student.StudentNumber;
 
 
-                await _identity.SaveChangesAsync();
-                await _business.SaveChangesAsync();
+                _identityUserRepository.Save();
+                _studentRepository.Save();
                 return RedirectToAction(nameof(Index));
             }
             return View(student);
@@ -214,12 +217,12 @@ namespace FysioApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            var identityStudent = await _identity.Users.SingleOrDefaultAsync(t => t.Id == id);
-            _identity.Users.Remove(identityStudent);
-            await _identity.SaveChangesAsync();
-            var student = await _business.Student.SingleOrDefaultAsync(s => s.Id == id);
-            _business.Student.Remove(student);
-            await _business.SaveChangesAsync();
+            _identityUserRepository.DeleteUser(id);
+            _identityUserRepository.Save();
+            _studentRepository.DeleteStudent(id);
+            _studentRepository.Save();
+            
+            
             return RedirectToAction(nameof(Index));
         }
 

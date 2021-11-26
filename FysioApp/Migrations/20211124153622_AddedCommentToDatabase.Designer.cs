@@ -4,14 +4,16 @@ using FysioApp.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace FysioApp.Migrations
 {
     [DbContext(typeof(BusinessDbContext))]
-    partial class BusinessDbContextModelSnapshot : ModelSnapshot
+    [Migration("20211124153622_AddedCommentToDatabase")]
+    partial class AddedCommentToDatabase
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -175,18 +177,10 @@ namespace FysioApp.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("PatientFileId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("TimeOfPosting")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("Visible")
-                        .HasColumnType("bit");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("PatientFileId");
 
                     b.ToTable("Comment");
                 });
@@ -262,17 +256,6 @@ namespace FysioApp.Migrations
                     b.Navigation("Patient");
 
                     b.Navigation("Student");
-                });
-
-            modelBuilder.Entity("FysioApp.Models.Comment", b =>
-                {
-                    b.HasOne("FysioApp.Models.PatientFile", "PatientFile")
-                        .WithMany()
-                        .HasForeignKey("PatientFileId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("PatientFile");
                 });
 
             modelBuilder.Entity("FysioApp.Models.PatientFile", b =>

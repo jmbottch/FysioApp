@@ -1,5 +1,7 @@
+using FysioApp.Abstractions;
 using FysioApp.Data;
 using FysioApp.Models.ApplicationUsers;
+using FysioApp.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -35,6 +37,9 @@ namespace FysioApp
                 options.UseSqlServer(
                     Configuration.GetConnectionString("BusinessConnection")));
             services.AddDatabaseDeveloperPageExceptionFilter();
+
+            services.AddTransient<IStudentRepostitory, StudentRepository>();
+            services.AddTransient<IIdentityUserRepository, IdentityUserRepository>();
 
 
             services.AddIdentity<IdentityUser, IdentityRole>()

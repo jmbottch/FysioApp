@@ -29,13 +29,23 @@ namespace FysioApp.Controllers
         public async Task<IActionResult> Details(int id)
         {
             var file = await _business.PatientFile.Where(f => f.Id == id).Include(p => p.HeadPractitioner).Include(p => p.Patient).Include(p => p.IntakeDoneBy).Include(p => p.IntakeSupervisedBy).FirstOrDefaultAsync();
-            return View(file);
+            DetailsPatientFileViewModel vm = new DetailsPatientFileViewModel()
+            {
+                PatientFile = file,
+                Comment = new Comment()
+            };
+            return View(vm);
         }
 
         public async Task<IActionResult> MyDetails(string id)
         {
             var file = await _business.PatientFile.Where(f => f.PatientId == id).Include(p => p.HeadPractitioner).Include(p => p.Patient).Include(p => p.IntakeDoneBy).Include(p => p.IntakeSupervisedBy).FirstOrDefaultAsync();
-            return View("Details", file);
+            DetailsPatientFileViewModel vm = new DetailsPatientFileViewModel()
+            {
+                PatientFile = file,
+                Comment = new Comment()
+            };
+            return View("Details", vm);
         }
 
         public IActionResult Edit(int id)
@@ -157,6 +167,39 @@ namespace FysioApp.Controllers
             _business.PatientFile.Remove(file);
             await _business.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> AddComment(DetailsPatientFileViewModel model)
+        {
+            var claimsIdentity = (ClaimsIdentity)this.User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+            if(User.IsInRole(StaticDetails.StudentEndUser))
+            {
+                var user = _business.Student.Where(s => s.Id == userId).FirstOrDefault();
+                model.Comment.AuthorName = user.FirstName + " " + user.LastName;
+            }
+            if(User.IsInRole(StaticDetails.TeacherEndUser))
+            {
+                var user = _business.Teacher.Where(t => t.Id == userId).FirstOrDefault();
+                model.Comment.AuthorName = user.FirstName + " " + user.LastName;
+            }
+
+            if(ModelState.IsValid)
+            {
+                _business.Comment.Add(model.Comment);
+                await _business.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            } else
+            {
+                var file = await _business.PatientFile.Where(f => f.Id == model.PatientFile.Id).Include(p => p.HeadPractitioner).Include(p => p.Patient).Include(p => p.IntakeDoneBy).Include(p => p.IntakeSupervisedBy).FirstOrDefaultAsync();
+                DetailsPatientFileViewModel vm = new DetailsPatientFileViewModel()
+                {
+                    PatientFile = file,
+                    Comment = model.Comment
+                };
+                return View(nameof(Details),vm);
+            }
+           
         }
     }
 }

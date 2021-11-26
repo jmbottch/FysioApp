@@ -21,5 +21,6 @@ namespace FysioApp.Data
         public DbSet<Teacher> Teacher { get; set; }
         public DbSet<Patient> Patient { get; set; }
         public DbSet<PatientFile> PatientFile { get; set; }
+        public DbSet<Comment> Comment { get; set; }
     }
 }

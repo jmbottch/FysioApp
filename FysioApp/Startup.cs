@@ -39,6 +39,7 @@ namespace FysioApp
             services.AddDatabaseDeveloperPageExceptionFilter();
 
             services.AddTransient<IStudentRepostitory, StudentRepository>();
+            services.AddTransient<ITeacherRepository, TeacherRepository>();
             services.AddTransient<IIdentityUserRepository, IdentityUserRepository>();
 
 

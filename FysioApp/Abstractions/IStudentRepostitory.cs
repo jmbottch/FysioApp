@@ -12,7 +12,7 @@ namespace FysioApp.Abstractions
         IQueryable<Student> GetStudent(string id);
         void CreateStudent(Student student);
         void UpdateStudent(Student student);
-        void DeleteStudent(string Id);
+        void DeleteStudent(string id);
         void Save();
     }
 }

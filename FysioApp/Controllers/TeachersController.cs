@@ -1,4 +1,5 @@
-﻿using FysioApp.Data;
+﻿using FysioApp.Abstractions;
+using FysioApp.Data;
 using FysioApp.Models.ApplicationUsers;
 using FysioApp.Models.ViewModels.ApplicationUserViewModels;
 using FysioApp.Utility;
@@ -16,34 +17,35 @@ namespace FysioApp.Controllers
 {
     public class TeachersController : Controller
     {
-        private readonly ApplicationDbContext _identity;
-        private readonly BusinessDbContext _business;
+        private readonly IIdentityUserRepository _identityRepository;
+        private readonly ITeacherRepository _teacherRepository;
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly ILogger<RegisterTeacherViewModel> _logger;
         private readonly RoleManager<IdentityRole> _roleManager;
 
         public TeachersController(
-            ApplicationDbContext identity, 
-            SignInManager<IdentityUser> signInManager, 
-            UserManager<IdentityUser> userManager, 
-            ILogger<RegisterTeacherViewModel> logger, 
-            RoleManager<IdentityRole> roleManager,
-            BusinessDbContext business
+            IIdentityUserRepository identityRepository,
+            ITeacherRepository teacherRepository,
+            SignInManager<IdentityUser> signInManager,
+            UserManager<IdentityUser> userManager,
+            ILogger<RegisterTeacherViewModel> logger,
+            RoleManager<IdentityRole> roleManager
             )
         {
-            _identity = identity;
+
             _signInManager = signInManager;
             _userManager = userManager;
             _logger = logger;
             _roleManager = roleManager;
-            _business = business;
+            _identityRepository = identityRepository;
+            _teacherRepository = teacherRepository;
         }
 
         //Get for Index
         public async Task<IActionResult> Index()
         {
-            return View(await _business.Teacher.ToListAsync());
+            return View(await _teacherRepository.GetTeachers().ToListAsync());
         }
 
         //Get for Create
@@ -59,8 +61,7 @@ namespace FysioApp.Controllers
             {
                 return NotFound();
             }
-
-            var teacher = await _business.Teacher.SingleOrDefaultAsync(t => t.Id == id);
+            Teacher teacher = await _teacherRepository.GetTeacher(id).FirstOrDefaultAsync();            
             if (teacher == null)
             {
                 return NotFound();
@@ -69,15 +70,15 @@ namespace FysioApp.Controllers
         }
 
         //Get for Edit
-        public async Task<IActionResult> Edit (string id)
+        public async Task<IActionResult> Edit(string id)
         {
-            if(id == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var teacher = await _business.Teacher.SingleOrDefaultAsync(t => t.Id == id);
-            if(teacher == null)
+            Teacher teacher = await _teacherRepository.GetTeacher(id).FirstOrDefaultAsync();
+            if (teacher == null)
             {
                 return NotFound();
             }
@@ -92,7 +93,7 @@ namespace FysioApp.Controllers
                 return NotFound();
             }
 
-            var teacher = await _business.Teacher.SingleOrDefaultAsync(t => t.Id == id);
+            Teacher teacher = await _teacherRepository.GetTeacher(id).FirstOrDefaultAsync();
             if (teacher == null)
             {
                 return NotFound();
@@ -114,13 +115,13 @@ namespace FysioApp.Controllers
                     UserName = model.Email,
                     Email = model.Email
                 };
-                                
+
 
                 var result = await _userManager.CreateAsync(identityTeacher, model.Password);
-                if(result.Succeeded)
+                if (result.Succeeded)
                 {
                     _logger.LogInformation("Teacher has created a new account with password");
-                    if(! await _roleManager.RoleExistsAsync(StaticDetails.TeacherEndUser))
+                    if (!await _roleManager.RoleExistsAsync(StaticDetails.TeacherEndUser))
                     {
                         await _roleManager.CreateAsync(new IdentityRole(StaticDetails.TeacherEndUser));
                     }
@@ -134,7 +135,7 @@ namespace FysioApp.Controllers
                     }
 
                     await _userManager.AddToRoleAsync(identityTeacher, StaticDetails.TeacherEndUser);
-                    var teacherFromDb = await _identity.Users.Where(t => t.Email == model.Email).FirstOrDefaultAsync();
+                    var teacherFromDb = await _identityRepository.GetUserByEmail(model.Email).FirstOrDefaultAsync();
                     var teacher = new Teacher()
                     {
                         Id = teacherFromDb.Id,
@@ -146,8 +147,8 @@ namespace FysioApp.Controllers
                         BigNumber = model.BigNumber
                     };
 
-                    _business.Teacher.Add(teacher);
-                    await _business.SaveChangesAsync();
+                    _teacherRepository.CreateTeacher(teacher);
+                    _teacherRepository.Save();
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {
@@ -182,12 +183,12 @@ namespace FysioApp.Controllers
             {
                 return NotFound();
             }
-            var identityTeacherFromDb = await _identity.Users.Where(t => t.Id == id).FirstOrDefaultAsync();
-            if(identityTeacherFromDb == null )
+            IdentityUser identityTeacherFromDb = await _identityRepository.GetUser(id).FirstOrDefaultAsync();
+            if (identityTeacherFromDb == null)
             {
                 return NotFound();
-            }    
-            var teacherFromDb = await _business.Teacher.Where(t => t.Id == id).FirstOrDefaultAsync();
+            }
+            Teacher teacherFromDb = await _teacherRepository.GetTeacher(id).FirstOrDefaultAsync();
             if (teacherFromDb == null)
             {
                 return NotFound();
@@ -206,8 +207,8 @@ namespace FysioApp.Controllers
                 teacherFromDb.EmployeeNumber = teacher.EmployeeNumber;
                 teacherFromDb.BigNumber = teacher.BigNumber;
 
-                await _identity.SaveChangesAsync();
-                await _business.SaveChangesAsync();
+                _identityRepository.Save();
+                _teacherRepository.Save();
                 return RedirectToAction(nameof(Index));
             }
             return View(teacher);
@@ -218,14 +219,13 @@ namespace FysioApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            var identityTeacher = await _identity.Users.SingleOrDefaultAsync(t => t.Id == id);
-            _identity.Users.Remove(identityTeacher);
-            await _identity.SaveChangesAsync();
-            var teacher = await _business.Teacher.SingleOrDefaultAsync(s => s.Id == id);
-            _business.Teacher.Remove(teacher);
-            await _business.SaveChangesAsync();
+            _identityRepository.DeleteUser(id);
+            _identityRepository.Save();
+            _teacherRepository.DeleteTeacher(id);
+            _teacherRepository.Save();
+           
             return RedirectToAction(nameof(Index));
         }
     }
-        
+
 }

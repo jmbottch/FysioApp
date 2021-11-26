@@ -1,6 +1,6 @@
-﻿using FysioApp.Data;
+﻿using Infrastructure.Data;
 using FysioApp.Models;
-using FysioApp.Utility;
+using ApplicationCore.Utility;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;

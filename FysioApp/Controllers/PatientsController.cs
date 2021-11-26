@@ -1,8 +1,7 @@
-﻿using FysioApp.Abstractions;
-using FysioApp.Data;
-using FysioApp.Models.ApplicationUsers;
+﻿using ApplicationCore.Abstractions;
+using ApplicationCore.Entities.ApplicationUsers;
+using ApplicationCore.Utility;
 using FysioApp.Models.ViewModels.ApplicationUserViewModels;
-using FysioApp.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;

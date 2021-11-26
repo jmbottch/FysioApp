@@ -10,9 +10,9 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
-using FysioApp.Data;
-using FysioApp.Utility;
-using FysioApp.Models.ApplicationUsers;
+using Infrastructure.Data;
+using ApplicationCore.Utility;
+using ApplicationCore.Entities.ApplicationUsers;
 
 namespace FysioApp.Areas.Identity.Pages.Account.Manage
 {

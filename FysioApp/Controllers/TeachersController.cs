@@ -1,8 +1,7 @@
-﻿using FysioApp.Abstractions;
-using FysioApp.Data;
-using FysioApp.Models.ApplicationUsers;
+﻿using ApplicationCore.Abstractions;
+using ApplicationCore.Utility;
+using ApplicationCore.Entities.ApplicationUsers;
 using FysioApp.Models.ViewModels.ApplicationUserViewModels;
-using FysioApp.Utility;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -183,7 +182,7 @@ namespace FysioApp.Controllers
             {
                 return NotFound();
             }
-            IdentityUser identityTeacherFromDb = await _identityRepository.GetUser(id).FirstOrDefaultAsync();
+            IdentityUser identityTeacherFromDb = await _identityRepository.GetUser(teacher.Id).FirstOrDefaultAsync();
             if (identityTeacherFromDb == null)
             {
                 return NotFound();

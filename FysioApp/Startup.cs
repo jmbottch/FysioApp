@@ -1,7 +1,7 @@
-using FysioApp.Abstractions;
-using FysioApp.Data;
-using FysioApp.Models.ApplicationUsers;
-using FysioApp.Repositories;
+using ApplicationCore.Abstractions;
+using Infrastructure.Data;
+using ApplicationCore.Entities.ApplicationUsers;
+using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -42,6 +42,7 @@ namespace FysioApp
             services.AddTransient<ITeacherRepository, TeacherRepository>();
             services.AddTransient<IPatientRepository, PatientRepository>();
             services.AddTransient<IIdentityUserRepository, IdentityUserRepository>();
+            services.AddTransient<IPatientFileRepository, PatientFileRepository>();
             services.AddTransient<IAppointmentRepository, AppointmentRepository>();
 
 

@@ -1,7 +1,9 @@
-﻿using FysioApp.Data;
-using FysioApp.Models;
+﻿using ApplicationCore.Abstractions;
+using ApplicationCore.Entities;
+using ApplicationCore.Entities.ApplicationUsers;
+using ApplicationCore.Utility;
 using FysioApp.Models.ViewModels.PatientFileViewModels;
-using FysioApp.Utility;
+using Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -14,21 +16,33 @@ namespace FysioApp.Controllers
 {
     public class PatientFilesController : Controller
     {
-        private readonly BusinessDbContext _business;
+        private readonly IPatientFileRepository _patientFileRepository;
+        private readonly IStudentRepostitory _studentRepository;
+        private readonly ITeacherRepository _teacherRepository;
+        private readonly IPatientRepository _patientRepository;
 
-        public PatientFilesController(BusinessDbContext business)
+        public PatientFilesController(
+            IPatientFileRepository patientFileRepository,
+            IStudentRepostitory studentRepostitory,
+            ITeacherRepository teacherRepository,
+            IPatientRepository patientRepository
+            )
         {
-            _business = business;
+            _patientFileRepository = patientFileRepository;
+            _studentRepository = studentRepostitory;
+            _teacherRepository = teacherRepository;
+            _patientFileRepository = patientFileRepository;
+            _patientRepository = patientRepository;
         }
         public async Task<IActionResult> Index()
         {
-            var FilesList = await _business.PatientFile.Include(p => p.HeadPractitioner).Include(p => p.Patient).ToListAsync();
+            var FilesList = await _patientFileRepository.GetFiles().ToListAsync();
             return View(FilesList);
         }
 
         public async Task<IActionResult> Details(int id)
         {
-            var file = await _business.PatientFile.Where(f => f.Id == id).Include(p => p.HeadPractitioner).Include(p => p.Patient).Include(p => p.IntakeDoneBy).Include(p => p.IntakeSupervisedBy).FirstOrDefaultAsync();
+            PatientFile file = await _patientFileRepository.GetFile(id).FirstOrDefaultAsync();
             DetailsPatientFileViewModel vm = new DetailsPatientFileViewModel()
             {
                 PatientFile = file,
@@ -39,7 +53,7 @@ namespace FysioApp.Controllers
 
         public async Task<IActionResult> MyDetails(string id)
         {
-            var file = await _business.PatientFile.Where(f => f.PatientId == id).Include(p => p.HeadPractitioner).Include(p => p.Patient).Include(p => p.IntakeDoneBy).Include(p => p.IntakeSupervisedBy).FirstOrDefaultAsync();
+            PatientFile file = await _patientFileRepository.GetFileByPatientId(id).FirstOrDefaultAsync();
             DetailsPatientFileViewModel vm = new DetailsPatientFileViewModel()
             {
                 PatientFile = file,
@@ -48,9 +62,9 @@ namespace FysioApp.Controllers
             return View("Details", vm);
         }
 
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
-            var file = _business.PatientFile.Where(f => f.Id == id).Include(p => p.HeadPractitioner).Include(p => p.Patient).Include(p => p.IntakeDoneBy).Include(p => p.IntakeSupervisedBy).FirstOrDefault();
+            PatientFile file = await _patientFileRepository.GetFile(id).FirstOrDefaultAsync();
             if (file == null)
             {
                 return NotFound();
@@ -58,31 +72,28 @@ namespace FysioApp.Controllers
             CreatePatientFileViewModel EditVM = new CreatePatientFileViewModel()
             {
                 PatientFile = file,
-                Students = _business.Student.ToList(),
-                Patients = _business.Patient.ToList(),
-                Teachers = _business.Teacher.ToList()
+                Students = _studentRepository.GetStudents().ToList(),
+                Patients = _patientRepository.GetPatients().ToList(),
+                Teachers = _teacherRepository.GetTeachers().ToList()
             };
             return View(EditVM);
         }
 
         public async Task<IActionResult> Delete(int id)
         {
-            var file = await _business.PatientFile.Where(f => f.Id == id).Include(p => p.HeadPractitioner).Include(p => p.Patient).Include(p => p.IntakeDoneBy).Include(p => p.IntakeSupervisedBy).FirstOrDefaultAsync();
+            PatientFile file = await _patientFileRepository.GetFile(id).FirstOrDefaultAsync();
             return View(file);
         }
 
-        public IActionResult Create()
+        public async Task<IActionResult>Create()
         {           
 
             CreatePatientFileViewModel CreateVM = new CreatePatientFileViewModel()
             {
-                PatientFile = new PatientFile() 
-                {
-                
-                },
-                Students = _business.Student.ToList(),
-                Patients = _business.Patient.ToList(),
-                Teachers = _business.Teacher.ToList()                
+                PatientFile = new PatientFile(),
+                Students = await _studentRepository.GetStudents().ToListAsync(),
+                Patients = await _patientRepository.GetPatients().ToListAsync(),
+                Teachers = await _teacherRepository.GetTeachers().ToListAsync()
             };           
 
             return View(CreateVM);
@@ -92,10 +103,8 @@ namespace FysioApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreatePatientFileViewModel model)
         {
-            
-
-            var patient = _business.Patient.Where(p => p.Id == model.PatientFile.PatientId).FirstOrDefault();
-            var fileExists = _business.PatientFile.Where(p => p.PatientId == model.PatientFile.PatientId).FirstOrDefault();
+                       Patient patient = await _patientRepository.GetPatient(model.PatientFile.PatientId).FirstOrDefaultAsync();
+            var fileExists = await _patientFileRepository.GetFileByPatientId(model.PatientFile.PatientId).FirstOrDefaultAsync();
             if(fileExists != null)
             {
                 ModelState.AddModelError(string.Empty, "Er is reeds een dossier gemaakt voor deze patient");
@@ -105,17 +114,17 @@ namespace FysioApp.Controllers
 
             if (ModelState.IsValid)
             {
-                _business.PatientFile.Add(model.PatientFile);
-                await _business.SaveChangesAsync();
+                _patientFileRepository.CreateFile(model.PatientFile);
+                _patientFileRepository.Save();
                 return RedirectToAction(nameof(Index));
             } else
             {
                 CreatePatientFileViewModel vm = new CreatePatientFileViewModel()
                 {
                     PatientFile = model.PatientFile,
-                    Students = _business.Student.ToList(),
-                    Patients = _business.Patient.ToList(),
-                    Teachers = _business.Teacher.ToList()
+                    Students = await _studentRepository.GetStudents().ToListAsync(),
+                    Patients = await _patientRepository.GetPatients().ToListAsync(),
+                    Teachers = await _teacherRepository.GetTeachers().ToListAsync()
                 };
                 return View(vm);
             }
@@ -127,8 +136,8 @@ namespace FysioApp.Controllers
         {
             if(ModelState.IsValid)
             {
-                var patientFromDb = _business.Patient.Where(p => p.Id == model.PatientFile.PatientId).FirstOrDefault();
-                var fileFromDb = await _business.PatientFile.Where(f => f.Id == model.PatientFile.Id).FirstOrDefaultAsync();
+                Patient patientFromDb = _patientRepository.GetPatient(model.PatientFile.PatientId).FirstOrDefault();
+                PatientFile fileFromDb = _patientFileRepository.GetFile(model.PatientFile.Id).FirstOrDefault();
                 if(fileFromDb == null)
                 {
                     return NotFound();
@@ -143,16 +152,16 @@ namespace FysioApp.Controllers
                 fileFromDb.AmountOfSessionsPerWeek = model.PatientFile.AmountOfSessionsPerWeek;
                 fileFromDb.SessionDuration = model.PatientFile.SessionDuration;
 
-                await _business.SaveChangesAsync();
+                _patientFileRepository.Save();
                 return RedirectToAction(nameof(Index));
             } else
             {
                 CreatePatientFileViewModel vm = new CreatePatientFileViewModel()
                 {
                     PatientFile = model.PatientFile,
-                    Students = _business.Student.ToList(),
-                    Patients = _business.Patient.ToList(),
-                    Teachers = _business.Teacher.ToList()
+                    Students = await _studentRepository.GetStudents().ToListAsync(),
+                    Patients = await _patientRepository.GetPatients().ToListAsync(),
+                    Teachers = await _teacherRepository.GetTeachers().ToListAsync()
                 };
                 return View(vm);
             }
@@ -162,10 +171,10 @@ namespace FysioApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var file = await _business.PatientFile.Where(p => p.Id == id).FirstOrDefaultAsync();
 
-            _business.PatientFile.Remove(file);
-            await _business.SaveChangesAsync();
+            _patientFileRepository.DeleteFile(id);
+            _patientFileRepository.Save();
+
             return RedirectToAction(nameof(Index));
         }
 
@@ -175,23 +184,23 @@ namespace FysioApp.Controllers
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
             if(User.IsInRole(StaticDetails.StudentEndUser))
             {
-                var user = _business.Student.Where(s => s.Id == userId).FirstOrDefault();
+                var user = _studentRepository.GetStudent(userId).FirstOrDefault();
                 model.Comment.AuthorName = user.FirstName + " " + user.LastName;
             }
             if(User.IsInRole(StaticDetails.TeacherEndUser))
             {
-                var user = _business.Teacher.Where(t => t.Id == userId).FirstOrDefault();
+                var user = _teacherRepository.GetTeacher(userId).FirstOrDefault();
                 model.Comment.AuthorName = user.FirstName + " " + user.LastName;
             }
 
             if(ModelState.IsValid)
             {
-                _business.Comment.Add(model.Comment);
-                await _business.SaveChangesAsync();
+                _patientFileRepository.AddComment(model.Comment);
+                _patientFileRepository.Save();
                 return RedirectToAction(nameof(Index));
             } else
             {
-                var file = await _business.PatientFile.Where(f => f.Id == model.PatientFile.Id).Include(p => p.HeadPractitioner).Include(p => p.Patient).Include(p => p.IntakeDoneBy).Include(p => p.IntakeSupervisedBy).FirstOrDefaultAsync();
+                PatientFile file = await _patientFileRepository.GetFile(model.PatientFile.Id).FirstOrDefaultAsync();
                 DetailsPatientFileViewModel vm = new DetailsPatientFileViewModel()
                 {
                     PatientFile = file,

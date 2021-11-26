@@ -1,9 +1,8 @@
-﻿using FysioApp.Abstractions;
-using FysioApp.Data;
-using FysioApp.Models;
-using FysioApp.Models.ApplicationUsers;
+﻿using ApplicationCore.Abstractions;
+using ApplicationCore.Entities;
+using ApplicationCore.Entities.ApplicationUsers;
+using ApplicationCore.Utility;
 using FysioApp.Models.ViewModels.AppointmentViewModels;
-using FysioApp.Utility;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -19,9 +18,9 @@ namespace FysioApp.Controllers
     public class AppointmentsController : Controller
     {
         private readonly IAppointmentRepository _appointmentRepository;
+        private readonly IIdentityUserRepository _identityUserRepository;
         private readonly IStudentRepostitory _studentRepository;
         private readonly ITeacherRepository _teacherRepository;
-        private readonly IIdentityUserRepository _identityUserRepository;
         private readonly IPatientRepository _patientRepository;
 
         public AppointmentsController(

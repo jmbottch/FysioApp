@@ -1,9 +1,8 @@
-﻿using FysioApp.Abstractions;
-using FysioApp.Data;
-using FysioApp.Models.ApplicationUsers;
+﻿using ApplicationCore.Abstractions;
+using Infrastructure.Data;
+using ApplicationCore.Entities.ApplicationUsers;
 using FysioApp.Models.ViewModels.ApplicationUserViewModels;
-using FysioApp.Repositories;
-using FysioApp.Utility;
+using ApplicationCore.Utility;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

@@ -33,6 +33,12 @@ namespace Infrastructure.Repositories
             return _business.PatientFile.Where(f => f.PatientId == id).Include(p => p.HeadPractitioner).Include(p => p.Patient).Include(p => p.IntakeDoneBy).Include(p => p.IntakeSupervisedBy);
         }
 
+        public IQueryable<Comment> GetCommentsByPatientFileId(int id)
+        {
+            return _business.Comment.Where(f => f.PatientFileId == id);
+        }
+        
+
         public void CreateFile(PatientFile file)
         {
             _business.PatientFile.Add(file);

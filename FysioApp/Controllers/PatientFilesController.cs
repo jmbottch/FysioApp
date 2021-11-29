@@ -43,10 +43,12 @@ namespace FysioApp.Controllers
         public async Task<IActionResult> Details(int id)
         {
             PatientFile file = await _patientFileRepository.GetFile(id).FirstOrDefaultAsync();
+            List<Comment> comments = await _patientFileRepository.GetCommentsByPatientFileId(id).OrderByDescending(c => c.TimeOfPosting).ToListAsync();
             DetailsPatientFileViewModel vm = new DetailsPatientFileViewModel()
             {
                 PatientFile = file,
-                Comment = new Comment()
+                Comment = new Comment(),
+                Comments = comments
             };
             return View(vm);
         }
@@ -54,10 +56,12 @@ namespace FysioApp.Controllers
         public async Task<IActionResult> MyDetails(string id)
         {
             PatientFile file = await _patientFileRepository.GetFileByPatientId(id).FirstOrDefaultAsync();
+            List<Comment> comments = await _patientFileRepository.GetCommentsByPatientFileId(file.Id).OrderByDescending(c => c.TimeOfPosting).ToListAsync();
             DetailsPatientFileViewModel vm = new DetailsPatientFileViewModel()
             {
                 PatientFile = file,
-                Comment = new Comment()
+                Comment = new Comment(),
+                Comments = comments
             };
             return View("Details", vm);
         }
@@ -85,8 +89,8 @@ namespace FysioApp.Controllers
             return View(file);
         }
 
-        public async Task<IActionResult>Create()
-        {           
+        public async Task<IActionResult> Create()
+        {
 
             CreatePatientFileViewModel CreateVM = new CreatePatientFileViewModel()
             {
@@ -94,7 +98,7 @@ namespace FysioApp.Controllers
                 Students = await _studentRepository.GetStudents().ToListAsync(),
                 Patients = await _patientRepository.GetPatients().ToListAsync(),
                 Teachers = await _teacherRepository.GetTeachers().ToListAsync()
-            };           
+            };
 
             return View(CreateVM);
         }
@@ -103,21 +107,22 @@ namespace FysioApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreatePatientFileViewModel model)
         {
-                       Patient patient = await _patientRepository.GetPatient(model.PatientFile.PatientId).FirstOrDefaultAsync();
+            Patient patient = await _patientRepository.GetPatient(model.PatientFile.PatientId).FirstOrDefaultAsync();
             var fileExists = await _patientFileRepository.GetFileByPatientId(model.PatientFile.PatientId).FirstOrDefaultAsync();
-            if(fileExists != null)
+            if (fileExists != null)
             {
                 ModelState.AddModelError(string.Empty, "Er is reeds een dossier gemaakt voor deze patient");
             }
 
-            model.PatientFile.age = Decimal.ToInt32(((model.PatientFile.DateOfArrival - patient.DateOfBirth).Days) / 365.25m);            
+            model.PatientFile.age = Decimal.ToInt32(((model.PatientFile.DateOfArrival - patient.DateOfBirth).Days) / 365.25m);
 
             if (ModelState.IsValid)
             {
                 _patientFileRepository.CreateFile(model.PatientFile);
                 _patientFileRepository.Save();
                 return RedirectToAction(nameof(Index));
-            } else
+            }
+            else
             {
                 CreatePatientFileViewModel vm = new CreatePatientFileViewModel()
                 {
@@ -134,14 +139,14 @@ namespace FysioApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(CreatePatientFileViewModel model)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 Patient patientFromDb = _patientRepository.GetPatient(model.PatientFile.PatientId).FirstOrDefault();
                 PatientFile fileFromDb = _patientFileRepository.GetFile(model.PatientFile.Id).FirstOrDefault();
-                if(fileFromDb == null)
+                if (fileFromDb == null)
                 {
                     return NotFound();
-                }               
+                }
 
                 fileFromDb.ComplaintsDescription = model.PatientFile.ComplaintsDescription;
                 fileFromDb.age = Decimal.ToInt32(((model.PatientFile.DateOfArrival - patientFromDb.DateOfBirth).Days) / 365.25m); ;
@@ -154,7 +159,8 @@ namespace FysioApp.Controllers
 
                 _patientFileRepository.Save();
                 return RedirectToAction(nameof(Index));
-            } else
+            }
+            else
             {
                 CreatePatientFileViewModel vm = new CreatePatientFileViewModel()
                 {
@@ -182,33 +188,45 @@ namespace FysioApp.Controllers
         {
             var claimsIdentity = (ClaimsIdentity)this.User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
-            if(User.IsInRole(StaticDetails.StudentEndUser))
+            if (User.IsInRole(StaticDetails.StudentEndUser))
             {
                 var user = _studentRepository.GetStudent(userId).FirstOrDefault();
                 model.Comment.AuthorName = user.FirstName + " " + user.LastName;
             }
-            if(User.IsInRole(StaticDetails.TeacherEndUser))
+            if (User.IsInRole(StaticDetails.TeacherEndUser))
             {
                 var user = _teacherRepository.GetTeacher(userId).FirstOrDefault();
                 model.Comment.AuthorName = user.FirstName + " " + user.LastName;
             }
 
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 _patientFileRepository.AddComment(model.Comment);
                 _patientFileRepository.Save();
-                return RedirectToAction(nameof(Index));
-            } else
-            {
-                PatientFile file = await _patientFileRepository.GetFile(model.PatientFile.Id).FirstOrDefaultAsync();
+
                 DetailsPatientFileViewModel vm = new DetailsPatientFileViewModel()
                 {
-                    PatientFile = file,
-                    Comment = model.Comment
+                    PatientFile = await _patientFileRepository.GetFile(model.Comment.PatientFileId).FirstOrDefaultAsync(),
+                    Comment = new Comment()
+                    {
+                        Content = ""
+                    },
+                    Comments = await _patientFileRepository.GetCommentsByPatientFileId(model.Comment.PatientFileId).OrderByDescending(c => c.TimeOfPosting).ToListAsync()
                 };
-                return View(nameof(Details),vm);
+
+                return View(nameof(Details), vm);
             }
-           
+            else
+            {
+                DetailsPatientFileViewModel vm = new DetailsPatientFileViewModel()
+                {
+                    PatientFile = await _patientFileRepository.GetFile(model.Comment.PatientFileId).FirstOrDefaultAsync(),
+                    Comment = model.Comment,
+                    Comments = await _patientFileRepository.GetCommentsByPatientFileId(model.Comment.PatientFileId).ToListAsync()
+                };
+                return View(nameof(Details), vm);
+            }
+
         }
     }
 }

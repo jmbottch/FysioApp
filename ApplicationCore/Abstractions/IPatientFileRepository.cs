@@ -17,6 +17,7 @@ namespace ApplicationCore.Abstractions
         void UpdateFile(int id, PatientFile patient);
         void DeleteFile(int id);
 
+        IQueryable<Comment> GetCommentsByPatientFileId(int id);
         void AddComment(Comment comment);
 
         void Save();

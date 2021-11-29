@@ -185,9 +185,27 @@
                         </div>
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-md-7">
-                                    <ul class="list-group">
-                                    </ul>
+                                <div class="col-md-7 border" style="overflow-y:auto; max-height:360px;">
+                                    
+                                        @foreach(var comment in Model.Comments)
+                                        {
+                                            <div class="card mt-1">
+                                                <div class="card-header">
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            @comment.AuthorName
+                                                        </div>
+                                                        <div class="col-md-6 text-right">
+                                                            @comment.TimeOfPosting.ToShortDateString() @comment.TimeOfPosting.ToShortTimeString()
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="card-body">
+                                                    <p>@comment.Content</p>
+                                                </div>
+                                            </div>                                        
+                                        }
+                                    
                                 </div>
                                 <div class="col-md-5">
                                     <form class="card" asp-action="AddComment">
@@ -195,25 +213,25 @@
                                             <h6 class="card-title">Nieuwe Opmerking</h6>
                                         </div>
                                         <div class="card-body">
-                                                                                          
-                                                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                                                <input hidden asp-for="Comment.AuthorName" value="" />
-                                                <input hidden asp-for="Comment.TimeOfPosting" type="date" value="@DateTime.Now" />
-                                                <input hidden asp-for="Comment.PatientFileId" value="@Model.PatientFile.Id" />
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <textarea asp-for="Comment.Content" typeof="text" style="height:150px;" class="form-control"></textarea>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-10">
-                                                        <label asp-for="Comment.Visible"></label>
-                                                    </div>
-                                                    <div class="col-md-2">
-                                                        <input asp-for="Comment.Visible" type="checkbox" />
-                                                    </div>
-                                                </div>
                                             
+                                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                            <input hidden asp-for="Comment.AuthorName" value="Unknown" />
+                                            <input hidden asp-for="Comment.TimeOfPosting" type="datetime" value="@DateTime.Now " />
+                                            <input hidden asp-for="Comment.PatientFileId" value="@Model.PatientFile.Id" />
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <textarea asp-for="Comment.Content" typeof="text" style="height:150px;" class="form-control"></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-10">
+                                                    <label asp-for="Comment.Visible"></label>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <input asp-for="Comment.Visible" type="checkbox" />
+                                                </div>
+                                            </div>
+
 
                                         </div>
                                         <div class="card-footer text-right">
@@ -222,6 +240,43 @@
                                     </form>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            @if(User.IsInRole(StaticDetails.PatientEndUser))
+            {
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title">
+                                Opmerkingen
+                            </h5>
+                        </div>
+                        <div class="card-body"  style="overflow-y:auto; max-height:360px;">
+
+                            @foreach (var comment in Model.Comments)
+                            {
+                                if (comment.Visible == true)
+                                {
+                                    <div class="card mt-1">
+                                        <div class="card-header">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    @comment.AuthorName
+                                                </div>
+                                                <div class="col-md-6 text-right">
+                                                    @comment.TimeOfPosting.ToShortDateString() @comment.TimeOfPosting.ToShortTimeString()
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-body">
+                                            <p>@comment.Content</p>
+                                        </div>
+                                    </div>
+                                }
+
+                            }
                         </div>
                     </div>
                 </div>

@@ -5,9 +5,11 @@ VisualStudioVersion = 16.0.30804.86
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FysioApp", "FysioApp\FysioApp.csproj", "{914CC5F0-7A46-49A0-8C37-89A20D8378EB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApplicationCore", "ApplicationCore\ApplicationCore.csproj", "{7DD2F835-7170-45EA-8D17-D24B8F884F24}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApplicationCore", "ApplicationCore\ApplicationCore.csproj", "{7DD2F835-7170-45EA-8D17-D24B8F884F24}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{74F19CDF-ABB4-459F-8006-4B6D34C7FC2E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{74F19CDF-ABB4-459F-8006-4B6D34C7FC2E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "API", "API\API.csproj", "{906E4724-FB65-41A8-9127-E3BD465D1350}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{74F19CDF-ABB4-459F-8006-4B6D34C7FC2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{74F19CDF-ABB4-459F-8006-4B6D34C7FC2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{74F19CDF-ABB4-459F-8006-4B6D34C7FC2E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{906E4724-FB65-41A8-9127-E3BD465D1350}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{906E4724-FB65-41A8-9127-E3BD465D1350}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{906E4724-FB65-41A8-9127-E3BD465D1350}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{906E4724-FB65-41A8-9127-E3BD465D1350}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

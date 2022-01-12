@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Entities;
+using ApplicationCore.Entities.ApiEntities;
 using ApplicationCore.Entities.ApplicationUsers;
 using System;
 using System.Collections.Generic;
@@ -14,5 +15,6 @@ namespace FysioApp.Models.ViewModels.PatientFileViewModels
         public IEnumerable<Student> Students { get; set; }
         public IEnumerable<Patient> Patients { get; set; }
         public IEnumerable<Teacher> Teachers { get; set; }
+        public IEnumerable<Diagnose> Diagnoses { get; set; }
     }
 }

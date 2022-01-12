@@ -11,5 +11,6 @@ namespace FysioApp.Models.ViewModels.PatientFileViewModels
         public PatientFile PatientFile { get; set; }
         public Comment Comment { get; set; }
         public IEnumerable<Comment> Comments { get; set; }
+        public IEnumerable<Treatment> Treatments { get; set; }
     }
 }

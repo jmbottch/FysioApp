@@ -4,14 +4,16 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(BusinessDbContext))]
-    partial class BusinessDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220109114221_rewroteTreatmentAsEntityAndRemovedFromAppointment")]
+    partial class rewroteTreatmentAsEntityAndRemovedFromAppointment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -270,9 +272,6 @@ namespace Infrastructure.Migrations
 
                     b.Property<string>("Explanation")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("PatientFileId")
-                        .HasColumnType("int");
 
                     b.Property<string>("Room")
                         .HasColumnType("nvarchar(max)");

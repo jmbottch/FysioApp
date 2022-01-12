@@ -13,9 +13,8 @@ namespace ApplicationCore.Entities
         [Required]
         public int Id { get; set; }
 
-        [Required]
         [Display(Name = "Omschrijving")]
-        public string Description { get; set; }
+        public string Description { get; set; }     
 
         [Required]
         [Display(Name = "Datum en Tijd")]        
@@ -31,6 +30,9 @@ namespace ApplicationCore.Entities
 
         [Display(Name ="Geannuleerd")]
         public bool IsCancelled { get; set; }
+
+        
+
 
         [ForeignKey("StudentId")]
         public virtual Student Student { get; set; }

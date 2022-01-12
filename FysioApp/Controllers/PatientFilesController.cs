@@ -1,5 +1,6 @@
 ﻿using ApplicationCore.Abstractions;
 using ApplicationCore.Entities;
+using ApplicationCore.Entities.ApiEntities;
 using ApplicationCore.Entities.ApplicationUsers;
 using ApplicationCore.Utility;
 using FysioApp.Models.ViewModels.PatientFileViewModels;
@@ -9,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -20,6 +22,8 @@ namespace FysioApp.Controllers
         private readonly IStudentRepostitory _studentRepository;
         private readonly ITeacherRepository _teacherRepository;
         private readonly IPatientRepository _patientRepository;
+
+        private static readonly HttpClient client = new HttpClient();
 
         public PatientFilesController(
             IPatientFileRepository patientFileRepository,
@@ -44,11 +48,13 @@ namespace FysioApp.Controllers
         {
             PatientFile file = await _patientFileRepository.GetFile(id).FirstOrDefaultAsync();
             List<Comment> comments = await _patientFileRepository.GetCommentsByPatientFileId(id).OrderByDescending(c => c.TimeOfPosting).ToListAsync();
+            List<Treatment> treatments = await _patientFileRepository.GetTreatmentsByPatientFileId(id).OrderByDescending(c => c.DateTime).ToListAsync();
             DetailsPatientFileViewModel vm = new DetailsPatientFileViewModel()
             {
                 PatientFile = file,
                 Comment = new Comment(),
-                Comments = comments
+                Comments = comments,
+                Treatments = treatments
             };
             return View(vm);
         }
@@ -73,9 +79,18 @@ namespace FysioApp.Controllers
             {
                 return NotFound();
             }
+
+            IEnumerable<Diagnose> diagnoses = new List<Diagnose>();
+            HttpResponseMessage response = await client.GetAsync("https://localhost:44326/api/Diagnoses");
+            if (response.IsSuccessStatusCode)
+            {
+                diagnoses = await response.Content.ReadAsAsync<IEnumerable<Diagnose>>();
+            }
+
             CreatePatientFileViewModel EditVM = new CreatePatientFileViewModel()
             {
                 PatientFile = file,
+                Diagnoses = diagnoses,
                 Students = _studentRepository.GetStudents().ToList(),
                 Patients = _patientRepository.GetPatients().ToList(),
                 Teachers = _teacherRepository.GetTeachers().ToList()
@@ -92,9 +107,17 @@ namespace FysioApp.Controllers
         public async Task<IActionResult> Create()
         {
 
+            IEnumerable<Diagnose> diagnoses = new List<Diagnose>();
+            HttpResponseMessage response = await client.GetAsync("https://localhost:44326/api/Diagnoses");
+            if(response.IsSuccessStatusCode)
+            {
+                diagnoses = await response.Content.ReadAsAsync<IEnumerable<Diagnose>>();
+            }
+
             CreatePatientFileViewModel CreateVM = new CreatePatientFileViewModel()
             {
                 PatientFile = new PatientFile(),
+                Diagnoses = diagnoses,
                 Students = await _studentRepository.GetStudents().ToListAsync(),
                 Patients = await _patientRepository.GetPatients().ToListAsync(),
                 Teachers = await _teacherRepository.GetTeachers().ToListAsync()
@@ -112,6 +135,14 @@ namespace FysioApp.Controllers
             if (fileExists != null)
             {
                 ModelState.AddModelError(string.Empty, "Er is reeds een dossier gemaakt voor deze patient");
+            }
+            string url = "https://localhost:44326/api/Diagnoses/" + model.PatientFile.DiagnoseCode;
+            Diagnose diagnose = new Diagnose();
+            HttpResponseMessage response = await client.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                diagnose = await response.Content.ReadAsAsync<Diagnose>();
+                model.PatientFile.DiagnoseDescription = diagnose.BodyLocalization + " | " + diagnose.Pathology;
             }
 
             model.PatientFile.age = Decimal.ToInt32(((model.PatientFile.DateOfArrival - patient.DateOfBirth).Days) / 365.25m);
@@ -148,6 +179,16 @@ namespace FysioApp.Controllers
                     return NotFound();
                 }
 
+                string url = "https://localhost:44326/api/Diagnoses/" + model.PatientFile.DiagnoseCode;
+                Diagnose diagnose = new Diagnose();
+                HttpResponseMessage response = await client.GetAsync(url);
+                if (response.IsSuccessStatusCode)
+                {
+                    diagnose = await response.Content.ReadAsAsync<Diagnose>();
+                    fileFromDb.DiagnoseDescription = diagnose.BodyLocalization + " | " + diagnose.Pathology;
+                }
+
+                fileFromDb.DiagnoseCode = model.PatientFile.DiagnoseCode;
                 fileFromDb.ComplaintsDescription = model.PatientFile.ComplaintsDescription;
                 fileFromDb.age = Decimal.ToInt32(((model.PatientFile.DateOfArrival - patientFromDb.DateOfBirth).Days) / 365.25m); ;
                 fileFromDb.HeadPractitionerId = model.PatientFile.HeadPractitionerId;
@@ -175,7 +216,7 @@ namespace FysioApp.Controllers
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public IActionResult DeleteConfirmed(int id)
         {
 
             _patientFileRepository.DeleteFile(id);

@@ -37,7 +37,12 @@ namespace Infrastructure.Repositories
         {
             return _business.Comment.Where(f => f.PatientFileId == id);
         }
-        
+
+        public IQueryable<Treatment> GetTreatmentsByPatientFileId(int id)
+        {
+            return _business.Treatments.Where(pfid => pfid.PatientFileId == id).Include(s => s.Student).Include(pf => pf.PatientFile).Include(p => p.PatientFile.Patient).OrderBy(x => x.DateTime);
+        }
+
 
         public void CreateFile(PatientFile file)
         {

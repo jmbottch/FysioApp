@@ -15,12 +15,11 @@ namespace FysioApp.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+
         private readonly BusinessDbContext _business;
 
-        public HomeController(ILogger<HomeController> logger, BusinessDbContext business)
+        public HomeController(BusinessDbContext business)
         {
-            _logger = logger;
             _business = business;
         }
 

@@ -142,10 +142,42 @@
                 </div>
                 <div class="row mt-2 card" style="width:100%;">
                     <div class="card-header">
-                        <h5 class="card-title">Omschrijving klachten</h5>
+                        <h5 class="card-title">Diagnose informatie</h5>
                     </div>
                     <div class="card-body">
-                        <p>@Model.PatientFile.ComplaintsDescription</p>
+                        <div class="row">
+                            <div class="col-md-5">
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label>Omschijving klachten</label>
+                                    </div>
+                                    <div class="row">
+                                        <textarea style="height:150px;" class="form-control" disabled>@Model.PatientFile.ComplaintsDescription</textarea>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="col-md-1"></div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label>Diagnose Code</label>
+                                    </div>
+                                    <div class="row">
+                                        <input value="@Model.PatientFile.DiagnoseCode" class="form-control" disabled />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label>Diagnose Omschrijving</label>
+                                    </div>
+                                    <div class="row">
+                                        <textarea class="form-control" disabled>@Model.PatientFile.DiagnoseDescription</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -186,26 +218,26 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-7 border" style="overflow-y:auto; max-height:360px;">
-                                    
-                                        @foreach(var comment in Model.Comments)
-                                        {
-                                            <div class="card mt-1">
-                                                <div class="card-header">
-                                                    <div class="row">
-                                                        <div class="col-md-6">
-                                                            @comment.AuthorName
-                                                        </div>
-                                                        <div class="col-md-6 text-right">
-                                                            @comment.TimeOfPosting.ToShortDateString() @comment.TimeOfPosting.ToShortTimeString()
-                                                        </div>
+
+                                    @foreach (var comment in Model.Comments)
+                                    {
+                                        <div class="card mt-1">
+                                            <div class="card-header">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        @comment.AuthorName
+                                                    </div>
+                                                    <div class="col-md-6 text-right">
+                                                        @comment.TimeOfPosting.ToShortDateString() @comment.TimeOfPosting.ToShortTimeString()
                                                     </div>
                                                 </div>
-                                                <div class="card-body">
-                                                    <p>@comment.Content</p>
-                                                </div>
-                                            </div>                                        
-                                        }
-                                    
+                                            </div>
+                                            <div class="card-body">
+                                                <p>@comment.Content</p>
+                                            </div>
+                                        </div>
+                                    }
+
                                 </div>
                                 <div class="col-md-5">
                                     <form class="card" asp-action="AddComment">
@@ -213,7 +245,7 @@
                                             <h6 class="card-title">Nieuwe Opmerking</h6>
                                         </div>
                                         <div class="card-body">
-                                            
+
                                             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                                             <input hidden asp-for="Comment.AuthorName" value="Unknown" />
                                             <input hidden asp-for="Comment.TimeOfPosting" type="datetime" value="@DateTime.Now " />
@@ -244,7 +276,7 @@
                     </div>
                 </div>
             }
-            @if(User.IsInRole(StaticDetails.PatientEndUser))
+            @if (User.IsInRole(StaticDetails.PatientEndUser))
             {
                 <div class="col-md-8">
                     <div class="card">
@@ -253,7 +285,7 @@
                                 Opmerkingen
                             </h5>
                         </div>
-                        <div class="card-body"  style="overflow-y:auto; max-height:360px;">
+                        <div class="card-body" style="overflow-y:auto; max-height:360px;">
 
                             @foreach (var comment in Model.Comments)
                             {
@@ -283,6 +315,46 @@
             }
 
         </div>
+        <div class="row mt-2">
+            <div class="col-md-12">
+                <div class="card" style="max-height:300px;">
+                    <div class="card-header">
+                        <div class="card-title">
+                            Behandelingen
+                        </div>
+                    </div>
+                    <div class="card-body" style="overflow-y:scroll">
+                        @foreach(var treatment in @Model.Treatments)
+                        {
+                            
+                                    <div class="row mt-1 form-group">
+                                        <div class="col-md-2">
+                                            <input class="form-control" value="@treatment.Code" disabled />
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input class="form-control" disabled value="@treatment.Description" />
+                                        </div>
+                                        <div class="col-md-2">
+                                            <input class="form-control" disabled value="@treatment.DateTime.ToShortDateString()" />
+                                        </div>
+                                        <div class="col-md-2">
+                                            <a class="btn btn-success" asp-controller="Treatments" asp-action="Details" asp-route-id="@treatment.Id">Details</a>
+                                        </div>
+                                    </div>
+                             <hr/>
+                        }
+                    </div>
+                    <div class="card-footer">
+                        @if (User.IsInRole(StaticDetails.StudentEndUser) || User.IsInRole(StaticDetails.TeacherEndUser))
+                        {
+                            <div class="float-right">
+                                <a class="btn btn-warning" asp-controller="Treatments" asp-action="Create" asp-route-patientfileid="@Model.PatientFile.Id">Voeg behandeling toe</a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="card-footer">
         <div class="btn-group">
@@ -296,6 +368,7 @@
                 <a class="btn btn-success" asp-action="Index" asp-controller="Home">Terug naar Home</a>
             }
         </div>
+        
     </div>
 </div>
 

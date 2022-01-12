@@ -46,6 +46,7 @@ namespace FysioApp
             services.AddTransient<IIdentityUserRepository, IdentityUserRepository>();
             services.AddTransient<IPatientFileRepository, PatientFileRepository>();
             services.AddTransient<IAppointmentRepository, AppointmentRepository>();
+            services.AddTransient<ITreatmentRepository, TreatmentRepository>();
 
 
             services.AddIdentity<IdentityUser, IdentityRole>()

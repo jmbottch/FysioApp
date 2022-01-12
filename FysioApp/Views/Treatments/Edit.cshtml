@@ -1,0 +1,81 @@
+﻿@model FysioApp.Models.ViewModels.TreatmentViewModels.CreateTreatmentViewModel
+@using FysioApp.Extensions
+@using ApplicationCore.Utility
+
+<form asp-action="Edit" class="card">
+    <div class="card-header">
+        <h4>Nieuwe Behandeling invoeren</h4>
+    </div>
+    <div class="card-body">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            Behandeling
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label class="control-label">
+                                Code
+                            </label>
+                            <span asp-validation-for="Treatment.Code" class="text-danger"></span>
+                            <select asp-for="Treatment.Code" class="form-control" asp-items="Model.Operations.ToSelectListItemOperation(Model.Treatment.Code)"></select>
+                            <input hidden asp-for="Treatment.Description" value="autofilled">
+                            <input hidden asp-for="Treatment.PatientFileId" />
+                            <input hidden asp-for="Treatment.Id" />
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">
+                                Bijzonderheden
+                            </label>
+                            <span asp-validation-for="Treatment.Explanation" class="text-danger"></span>
+                            <textarea asp-for="Treatment.Explanation" class="form-control" style="height:160px;"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            Info
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label class="control-label">
+                                Behandelaar
+                            </label>
+                            <span asp-validation-for="Treatment.StudentId" class="text-danger"></span>
+                            <select asp-for="Treatment.StudentId" class="form-control" asp-items="Model.Students.ToSelectListItem(Model.Treatment.StudentId)"></select>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">
+                                Datum
+                            </label>
+                            <span asp-validation-for="Treatment.DateTime" class="text-danger"></span>
+                            <input type="date" asp-for="Treatment.DateTime" class="form-control" />
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Ruimte</label>
+                            <span asp-validation-for="Treatment.Room" class="text-danger"></span>
+                            <select asp-for="Treatment.Room" class="form-control">
+                                <option value="Oefenzaal">Oefenzaal</option>
+                                <option value="Behandelruimte">Behandelruimte</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer">
+        <div class="btn-group">
+            <button class="btn btn-primary" type="submit">Opslaan</button>
+            <button class="btn btn-success">Terug</button>
+        </div>
+    </div>
+</form>

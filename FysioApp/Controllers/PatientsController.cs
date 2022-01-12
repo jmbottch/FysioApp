@@ -210,7 +210,7 @@ namespace FysioApp.Controllers
         [Authorize(Roles = StaticDetails.StudentEndUser)]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
+        public IActionResult DeleteConfirmed(string id)
         {
             _identityUserRepository.DeleteUser(id);
             _identityUserRepository.Save();

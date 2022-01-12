@@ -48,6 +48,15 @@ namespace ApplicationCore.Entities
         [Display(Name = "Aantal sessies per week")]
         public int AmountOfSessionsPerWeek { get; set; }
 
+        //Diagnose
+        [Required]
+        [Display(Name ="Diagnose Code")]
+        public string DiagnoseCode { get; set; }
+
+        [Required]
+        [Display(Name = "Diagnose Omschrijving")]
+        public string DiagnoseDescription { get; set; }
+
         //Virtuals
         [ForeignKey("PatientId")]
         public virtual Patient Patient { get; set; }

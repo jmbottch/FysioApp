@@ -22,5 +22,6 @@ namespace Infrastructure.Data
         public DbSet<Patient> Patient { get; set; }
         public DbSet<PatientFile> PatientFile { get; set; }
         public DbSet<Comment> Comment { get; set; }
+        public DbSet<Treatment> Treatments { get; set; }
     }
 }

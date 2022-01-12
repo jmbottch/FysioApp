@@ -1,0 +1,103 @@
+﻿@model ApplicationCore.Entities.Treatment
+
+<div class="card">
+    <div class="card-header">
+        <h4>Details van behandeling @Model.Id </h4>
+    </div>
+    <div class="card-body">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            Patient
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label class="control-label">
+                                Naam
+                            </label>
+                            <input disabled class="form-control" value="@Model.PatientFile.Patient.FirstName @Model.PatientFile.Patient.LastName" />
+                        </div>
+                        <div class=" form-group">
+                            <label class="control-label">
+                                Geboortedatum
+                            </label>
+                            <input disabled class="form-control" value="@Model.PatientFile.Patient.DateOfBirth.ToShortDateString()" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            Behandeling
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label class="control-label">
+                                Code
+                            </label>
+                            <input disabled class="form-control" asp-for="Code" />
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">
+                                Omschrijving
+                            </label>
+                            <input disabled class="form-control" asp-for="Description" />
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">
+                                Bijzonderheden
+                            </label>
+                            <textarea disabled asp-for="Explanation" class="form-control" style="height:160px;"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            Info
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label class="control-label">
+                                Datum
+                            </label>
+                            <input disabled type="date" asp-for="DateTime" class="form-control" />
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">
+                                Behandelaar
+                            </label>
+                            <input disabled class="form-control" value="@Model.Student.FirstName @Model.Student.LastName" />
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Ruimte</label>
+                            <input disabled asp-for="Room" class="form-control" />
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer">
+            @if (DateTime.Now.Date <= Model.DateTime)
+            {
+                <form asp-action="Delete" class="btn-group">
+                @*check loggedin user*@
+                <input type="hidden" asp-for="Id" />
+                <input type="submit" value="Delete" class="btn btn-danger" />
+                </form>
+            }
+        <button class="btn float-right btn-success" asp-controller="PatientFiles" asp-action="Details" asp-route-id="@Model.PatientFile.Id">Terug</button>
+    </div>
+</div>

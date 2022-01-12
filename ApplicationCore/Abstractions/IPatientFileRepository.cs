@@ -18,6 +18,7 @@ namespace ApplicationCore.Abstractions
         void DeleteFile(int id);
 
         IQueryable<Comment> GetCommentsByPatientFileId(int id);
+        IQueryable<Treatment> GetTreatmentsByPatientFileId(int id);
         void AddComment(Comment comment);
 
         void Save();

@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ApplicationCore.Entities;
 
 namespace FysioApp.Controllers
 {
@@ -22,10 +23,12 @@ namespace FysioApp.Controllers
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IStudentRepostitory _studentRepository;
         private readonly IIdentityUserRepository _identityUserRepository;
+        private readonly IAvailabilityRepository _availabilityRepository;
 
         public StudentsController(
             IStudentRepostitory studentRepository,
-            IIdentityUserRepository identityUserRepository,            
+            IIdentityUserRepository identityUserRepository, 
+            IAvailabilityRepository availabilityRepository,
             SignInManager<IdentityUser> signInManager,
             UserManager<IdentityUser> userManager,
             ILogger<RegisterStudentViewModel> logger,
@@ -38,6 +41,7 @@ namespace FysioApp.Controllers
             _roleManager = roleManager;
             _studentRepository = studentRepository;
             _identityUserRepository = identityUserRepository;
+            _availabilityRepository = availabilityRepository;
 
         }
 
@@ -136,6 +140,10 @@ namespace FysioApp.Controllers
 
                     await _userManager.AddToRoleAsync(identityStudent, StaticDetails.StudentEndUser);
 
+                    Availability newAv = new Availability();
+                    _availabilityRepository.CreateAvailability(newAv);
+                    _availabilityRepository.Save();
+
                     IdentityUser identityStudentFromDb = _identityUserRepository.GetUserByEmail(model.Email).FirstOrDefault();
                     var student = new Student()
                     {
@@ -144,7 +152,8 @@ namespace FysioApp.Controllers
                         FirstName = model.FirstName,
                         LastName = model.LastName,
                         PhoneNumber = model.PhoneNumber,
-                        StudentNumber = model.StudentNumber
+                        StudentNumber = model.StudentNumber,
+                        AvailabilityId = newAv.Id
                     };
                     _studentRepository.CreateStudent(student);
                     _studentRepository.Save();

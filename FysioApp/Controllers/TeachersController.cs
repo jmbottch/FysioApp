@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ApplicationCore.Entities;
 
 namespace FysioApp.Controllers
 {
@@ -18,6 +19,7 @@ namespace FysioApp.Controllers
     {
         private readonly IIdentityUserRepository _identityRepository;
         private readonly ITeacherRepository _teacherRepository;
+        private readonly IAvailabilityRepository _availabilityRepository;
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly ILogger<RegisterTeacherViewModel> _logger;
@@ -26,6 +28,7 @@ namespace FysioApp.Controllers
         public TeachersController(
             IIdentityUserRepository identityRepository,
             ITeacherRepository teacherRepository,
+            IAvailabilityRepository availabilityRepository,
             SignInManager<IdentityUser> signInManager,
             UserManager<IdentityUser> userManager,
             ILogger<RegisterTeacherViewModel> logger,
@@ -39,6 +42,7 @@ namespace FysioApp.Controllers
             _roleManager = roleManager;
             _identityRepository = identityRepository;
             _teacherRepository = teacherRepository;
+            _availabilityRepository = availabilityRepository;
         }
 
         //Get for Index
@@ -132,6 +136,9 @@ namespace FysioApp.Controllers
                     {
                         await _roleManager.CreateAsync(new IdentityRole(StaticDetails.PatientEndUser));
                     }
+                    Availability newAv = new Availability();
+                    _availabilityRepository.CreateAvailability(newAv);
+                    _availabilityRepository.Save();
 
                     await _userManager.AddToRoleAsync(identityTeacher, StaticDetails.TeacherEndUser);
                     var teacherFromDb = await _identityRepository.GetUserByEmail(model.Email).FirstOrDefaultAsync();
@@ -143,7 +150,8 @@ namespace FysioApp.Controllers
                         LastName = model.LastName,
                         PhoneNumber = model.PhoneNumber,
                         EmployeeNumber = model.EmployeeNumber,
-                        BigNumber = model.BigNumber
+                        BigNumber = model.BigNumber,
+                        AvailabilityId = newAv.Id
                     };
 
                     _teacherRepository.CreateTeacher(teacher);

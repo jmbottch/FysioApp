@@ -20,6 +20,9 @@ namespace ApplicationCore.Entities
         [Display(Name = "Datum en Tijd")]        
         public DateTime DateTime { get; set; }
 
+        [Display(Name ="Eindtijd")]
+        public DateTime EndTime { get; set; }
+
         [Required]
         [Display(Name = "Behandelaar")]
         public string StudentId { get; set; }

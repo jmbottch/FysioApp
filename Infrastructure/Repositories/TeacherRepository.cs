@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
 {
@@ -22,7 +23,7 @@ namespace Infrastructure.Repositories
         }
         public IQueryable<Teacher> GetTeacher(string id)
         {
-            return _business.Teacher.Where(t => t.Id == id);
+            return _business.Teacher.Where(t => t.Id == id).Include(a => a.Availability);
         }
 
         public void CreateTeacher(Teacher teacher)

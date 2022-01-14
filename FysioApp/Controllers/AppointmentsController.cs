@@ -24,6 +24,7 @@ namespace FysioApp.Controllers
         private readonly IStudentRepostitory _studentRepository;
         private readonly ITeacherRepository _teacherRepository;
         private readonly IPatientRepository _patientRepository;
+        private readonly IPatientFileRepository _patientFileRepository;
 
         private static readonly HttpClient client = new HttpClient();
 
@@ -32,7 +33,8 @@ namespace FysioApp.Controllers
             IIdentityUserRepository identityUserRepository,
             IStudentRepostitory studentRepostitory,
             IPatientRepository patientRepository,
-            ITeacherRepository teacherRepository
+            ITeacherRepository teacherRepository,
+            IPatientFileRepository patientFileRepository
             )
         {
             _appointmentRepository = appointmentRepository;
@@ -40,6 +42,7 @@ namespace FysioApp.Controllers
             _studentRepository = studentRepostitory;
             _teacherRepository = teacherRepository;
             _patientRepository = patientRepository;
+            _patientFileRepository = patientFileRepository;
 
         }
 
@@ -137,6 +140,15 @@ namespace FysioApp.Controllers
                 Appointment = model.Appointment
             };
 
+            //find patientfile to check how long an appointment will last and how many per week are permitted
+            PatientFile file = _patientFileRepository.GetFileByPatientId(model.Appointment.PatientId).FirstOrDefault();
+            //find student to check availability
+            Student student = _studentRepository.GetStudent(model.Appointment.StudentId).FirstOrDefault();
+            //find list of already existing appointments on chosen day
+            IEnumerable<Appointment> appointments = _appointmentRepository.GetAppointments().Where(a => a.DateTime.Date == model.Appointment.DateTime.Date).ToList();
+
+            
+
             if (ModelState.IsValid)
             {
                 if (model.Appointment.DateTime < DateTime.Now)
@@ -145,11 +157,122 @@ namespace FysioApp.Controllers
                     return View(modelVM);
                 }
 
+                //check if doctor already has appointment at this time
+                if (appointments != null)
+                {
+                    foreach (Appointment item in appointments)
+                    {                                               
+                        if (model.Appointment.DateTime < item.EndTime && model.Appointment.DateTime > item.DateTime) //if new starttime > existing starttime and < existing endtime
+                        {
+                            
+                            ModelState.AddModelError(string.Empty, "De behandelaar heeft al een afspraak op dit tijdstip");
+                            return View(modelVM);
+                        }
+                        if (model.Appointment.DateTime.AddHours(file.SessionDuration) < item.EndTime && model.Appointment.DateTime.AddHours(file.SessionDuration) > item.DateTime) //if new endtime < existing endtime and > existing starttime
+                        {
+                            ModelState.AddModelError(string.Empty, "De behandelaar heeft al een afspraak op dit tijdstip");
+                            return View(modelVM);
+                        }
+                    }
+                }
+
+                //if the weekend is chosen
+                if (model.Appointment.DateTime.DayOfWeek.ToString() == "Saturday" || model.Appointment.DateTime.DayOfWeek.ToString() == "Saturday")
+                {
+                    ModelState.AddModelError(string.Empty, "De praktijk is gesloten in het weekend.");
+                    return View(modelVM);
+                }
+
+                //if monday is chosen
+                if (model.Appointment.DateTime.DayOfWeek.ToString() == "Monday")
+                {
+
+                    if (DateTime.Parse(model.Appointment.DateTime.TimeOfDay.ToString()) < DateTime.Parse(student.Availability.MondayStart))
+                    {
+                        ModelState.AddModelError(string.Empty, "Het gekozen tijdstip is te vroeg.");
+                        return View(modelVM);
+                    }
+
+                    if (DateTime.Parse(model.Appointment.DateTime.AddHours(file.SessionDuration).TimeOfDay.ToString()) > DateTime.Parse(student.Availability.MondayEnd))
+                    {
+                        ModelState.AddModelError(string.Empty, "Het gekozen tijdstip is te laat.");
+                        return View(modelVM);
+                    }
+                }
+                //if tuesday is chosen
+                if (model.Appointment.DateTime.DayOfWeek.ToString() == "Tuesday")
+                {
+
+                    if (DateTime.Parse(model.Appointment.DateTime.TimeOfDay.ToString()) < DateTime.Parse(student.Availability.TuesdayStart))
+                    {
+                        ModelState.AddModelError(string.Empty, "Het gekozen tijdstip is te vroeg.");
+                        return View(modelVM);
+                    }
+
+                    if (DateTime.Parse(model.Appointment.DateTime.AddHours(file.SessionDuration).TimeOfDay.ToString()) > DateTime.Parse(student.Availability.TuesdayEnd))
+                    {
+                        ModelState.AddModelError(string.Empty, "Het gekozen tijdstip is te laat.");
+                        return View(modelVM);
+                    }
+                }
+
+                //if wednesday is chosen
+                if (model.Appointment.DateTime.DayOfWeek.ToString() == "Wednesday")
+                {
+
+                    if (DateTime.Parse(model.Appointment.DateTime.TimeOfDay.ToString()) < DateTime.Parse(student.Availability.WednesdayStart))
+                    {
+                        ModelState.AddModelError(string.Empty, "Het gekozen tijdstip is te vroeg.");
+                        return View(modelVM);
+                    }
+
+                    if (DateTime.Parse(model.Appointment.DateTime.AddHours(file.SessionDuration).TimeOfDay.ToString()) > DateTime.Parse(student.Availability.WednesdayEnd))
+                    {
+                        ModelState.AddModelError(string.Empty, "Het gekozen tijdstip is te laat.");
+                        return View(modelVM);
+                    }
+                }
+
+                //if Thursday is chosen
+                if (model.Appointment.DateTime.DayOfWeek.ToString() == "Thursday")
+                {
+
+                    if (DateTime.Parse(model.Appointment.DateTime.TimeOfDay.ToString()) < DateTime.Parse(student.Availability.ThursdayStart))
+                    {
+                        ModelState.AddModelError(string.Empty, "Het gekozen tijdstip is te vroeg.");
+                        return View(modelVM);
+                    }
+
+                    if (DateTime.Parse(model.Appointment.DateTime.AddHours(file.SessionDuration).TimeOfDay.ToString()) > DateTime.Parse(student.Availability.ThursdayEnd))
+                    {
+                        ModelState.AddModelError(string.Empty, "Het gekozen tijdstip is te laat.");
+                        return View(modelVM);
+                    }
+                }
+
+                //if Friday is chosen
+                if (model.Appointment.DateTime.DayOfWeek.ToString() == "Friday")
+                {
+
+                    if (DateTime.Parse(model.Appointment.DateTime.TimeOfDay.ToString()) < DateTime.Parse(student.Availability.FridayStart))
+                    {
+                        ModelState.AddModelError(string.Empty, "Het gekozen tijdstip is te vroeg.");
+                        return View(modelVM);
+                    }
+
+                    if (DateTime.Parse(model.Appointment.DateTime.AddHours(file.SessionDuration).TimeOfDay.ToString()) > DateTime.Parse(student.Availability.FridayEnd))
+                    {
+                        ModelState.AddModelError(string.Empty, "Het gekozen tijdstip is te laat.");
+                        return View(modelVM);
+                    }
+                }
+
                 // create a new appointment object
                 Appointment appointment = new Appointment()
                 {
                     Description = model.Appointment.Description,
                     DateTime = model.Appointment.DateTime,
+                    EndTime = model.Appointment.DateTime.AddHours(file.SessionDuration),
                     PatientId = model.Appointment.PatientId,
                     StudentId = model.Appointment.StudentId,
                     IsCancelled = false,
@@ -185,7 +308,7 @@ namespace FysioApp.Controllers
                 {
                     return NotFound();
                 }
-                
+
                 if (DateTime.Now.AddHours(24) > appointmentFromDb.DateTime) //check if appointment is within 24 hours
                 {
                     ModelState.AddModelError(string.Empty, "U mag de afspraak niet meer wijzigen, deze vindt plaats binnen 24 uur."); // if not return with error
@@ -200,7 +323,7 @@ namespace FysioApp.Controllers
 
                 //change most props
                 appointmentFromDb.DateTime = model.Appointment.DateTime;
-                appointmentFromDb.Description = model.Appointment.Description;  
+                appointmentFromDb.Description = model.Appointment.Description;
 
                 _appointmentRepository.Save();
                 return RedirectToAction(nameof(Index));
@@ -224,7 +347,7 @@ namespace FysioApp.Controllers
                 ModelState.AddModelError(string.Empty, "U mag de afspraak niet meer annuleren, deze vindt plaats binnen 24 uur."); // if not return with error
                 return View(appointment);
             }
-            
+
             appointment.IsCancelled = true;
             _appointmentRepository.Save();
             return RedirectToAction(nameof(Index));

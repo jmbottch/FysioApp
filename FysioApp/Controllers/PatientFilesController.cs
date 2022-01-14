@@ -61,7 +61,7 @@ namespace FysioApp.Controllers
 
         public async Task<IActionResult> MyDetails(string id)
         {
-            PatientFile file = await _patientFileRepository.GetFileByPatientId(id).FirstOrDefaultAsync();
+            PatientFile file = await _patientFileRepository.GetFileByPatientId(id).FirstOrDefaultAsync();            
             List<Comment> comments = await _patientFileRepository.GetCommentsByPatientFileId(file.Id).OrderByDescending(c => c.TimeOfPosting).ToListAsync();
             DetailsPatientFileViewModel vm = new DetailsPatientFileViewModel()
             {

@@ -1,0 +1,94 @@
+﻿@model IEnumerable<ApplicationCore.Entities.Availability>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.MondayStart)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MondayEnd)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TuesdayStart)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TuesdayEnd)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.WednesdayStart)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.WednesdayEnd)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ThursdayStart)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ThursdayEnd)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FridayStart)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FridayEnd)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null)
+        {
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.MondayStart)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.MondayEnd)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TuesdayStart)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TuesdayEnd)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.WednesdayStart)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.WednesdayEnd)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ThursdayStart)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ThursdayEnd)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FridayStart)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FridayEnd)
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+        }
+
+    </tbody>
+</table>

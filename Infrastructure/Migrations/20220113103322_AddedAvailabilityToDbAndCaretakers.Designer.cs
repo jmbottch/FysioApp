@@ -4,14 +4,16 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(BusinessDbContext))]
-    partial class BusinessDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220113103322_AddedAvailabilityToDbAndCaretakers")]
+    partial class AddedAvailabilityToDbAndCaretakers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -69,7 +71,7 @@ namespace Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("AvailabilityId")
+                    b.Property<int?>("AvailabilityId")
                         .HasColumnType("int");
 
                     b.Property<string>("Email")
@@ -104,7 +106,7 @@ namespace Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("AvailabilityId")
+                    b.Property<int?>("AvailabilityId")
                         .HasColumnType("int");
 
                     b.Property<int>("BigNumber")
@@ -148,9 +150,6 @@ namespace Infrastructure.Migrations
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("EndTime")
-                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsCancelled")
                         .HasColumnType("bit");
@@ -348,9 +347,7 @@ namespace Infrastructure.Migrations
                 {
                     b.HasOne("ApplicationCore.Entities.Availability", "Availability")
                         .WithMany()
-                        .HasForeignKey("AvailabilityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("AvailabilityId");
 
                     b.Navigation("Availability");
                 });
@@ -359,9 +356,7 @@ namespace Infrastructure.Migrations
                 {
                     b.HasOne("ApplicationCore.Entities.Availability", "Availability")
                         .WithMany()
-                        .HasForeignKey("AvailabilityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("AvailabilityId");
 
                     b.Navigation("Availability");
                 });

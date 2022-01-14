@@ -19,7 +19,7 @@
                     </div>
                     <div class="col-md-8">
                         <input asp-for="FirstName" class="form-control" disabled />
-                        
+
                     </div>
                 </div>
                 <div class="row form-group">
@@ -66,6 +66,72 @@
                 </div>
             </div>
         </div>
+        <div class="card">
+            <div class="card-header">
+                <h4>Beschikbaarheid</h4>
+            </div>
+            <div class="card-body">
+                <div class="form-group row">
+                    <div class="col-md-2">
+                        <h5>Maandag</h5>
+                    </div>
+                    <div class="col-md-5">
+                        Van @Html.DisplayFor(model => model.Availability.MondayStart)
+                    </div>
+                    <div class="col-md-5">
+                        Tot @Html.DisplayFor(model => model.Availability.MondayEnd)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-2">
+                        <h5>Dinsdag</h5>
+                    </div>
+                    <div class="col-md-5">
+                        Van @Html.DisplayFor(model => model.Availability.TuesdayStart)
+                    </div>
+                    <div class="col-md-5">
+                        Tot @Html.DisplayFor(model => model.Availability.TuesdayEnd)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-2">
+                        <h5>Woensdag</h5>
+                    </div>
+                    <div class="col-md-5">
+                        Van @Html.DisplayFor(model => model.Availability.WednesdayStart)
+                    </div>
+                    <div class="col-md-5">
+                        Tot @Html.DisplayFor(model => model.Availability.WednesdayEnd)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-2">
+                        <h5>Donderdag</h5>
+                    </div>
+                    <div class="col-md-5">
+                        Van @Html.DisplayFor(model => model.Availability.ThursdayStart)
+                    </div>
+                    <div class="col-md-5">
+                        Tot @Html.DisplayFor(model => model.Availability.ThursdayEnd)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-2">
+                        <h5>Vrijdag</h5>
+                    </div>
+                    <div class="col-md-5">
+                        Van @Html.DisplayFor(model => model.Availability.FridayStart)
+                    </div>
+                    <div class="col-md-5">
+                        Tot @Html.DisplayFor(model => model.Availability.FridayEnd)
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a class="btn btn-primary" asp-controller="Availabilities" asp-action="Edit" asp-route-id="@Model.AvailabilityId">Bijwerken</a>
+            </div>
+        </div>
+
     </div>
     <div class="card-footer">
         <div class="btn-group">

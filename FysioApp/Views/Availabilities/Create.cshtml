@@ -1,0 +1,219 @@
+﻿@model ApplicationCore.Entities.Availability
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Toevoegen</h1>
+
+<h4>Beschikbaarheid</h4>
+<hr />
+
+<form asp-action="Create">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <h5>Maandag</h5>
+    <div class="row">
+        <div class="col-md-5">
+            <div class="form-group">
+                <label class="control-label">Start</label>
+                <select asp-for="MondayStart" class="form-control">
+                    <option value="09:00">09:00</option>
+                    <option value="09:00">10:00</option>
+                    <option value="09:00">11:00</option>
+                    <option value="09:00">12:00</option>
+                    <option value="09:00">13:00</option>
+                    <option value="09:00">14:00</option>
+                    <option value="09:00">15:00</option>
+                    <option value="09:00">16:00</option>
+                </select>
+                <span asp-validation-for="MondayStart" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-2">
+            tot
+        </div>
+        <div class="col-md-5">
+            <div class="form-group">
+                <label class="control-label">Eind</label>
+                <select asp-for="MondayEnd" class="form-control">
+                    <option value="09:00">10:00</option>
+                    <option value="09:00">11:00</option>
+                    <option value="09:00">12:00</option>
+                    <option value="09:00">13:00</option>
+                    <option value="09:00">14:00</option>
+                    <option value="09:00">15:00</option>
+                    <option value="09:00">16:00</option>
+                    <option value="09:00">17:00</option>
+                </select>
+                <span asp-validation-for="MondayEnd" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <h5>Dinsdag</h5>
+    <div class="row">
+        <div class="col-md-5">
+            <div class="form-group">
+                <label class="control-label">Start</label>
+                <select asp-for="TuesdayStart" class="form-control">
+                    <option value="09:00">09:00</option>
+                    <option value="09:00">10:00</option>
+                    <option value="09:00">11:00</option>
+                    <option value="09:00">12:00</option>
+                    <option value="09:00">13:00</option>
+                    <option value="09:00">14:00</option>
+                    <option value="09:00">15:00</option>
+                    <option value="09:00">16:00</option>
+                </select>
+                <span asp-validation-for="TuesdayStart" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-2">
+            tot
+        </div>
+        <div class="col-md-5">
+            <div class="form-group">
+                <label class="control-label">Eind</label>
+                <select asp-for="TuesdayEnd" class="form-control">
+                    <option value="09:00">10:00</option>
+                    <option value="09:00">11:00</option>
+                    <option value="09:00">12:00</option>
+                    <option value="09:00">13:00</option>
+                    <option value="09:00">14:00</option>
+                    <option value="09:00">15:00</option>
+                    <option value="09:00">16:00</option>
+                    <option value="09:00">17:00</option>
+                </select>
+                <span asp-validation-for="TuesdayEnd" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <h5>Woensdag</h5>
+    <div class="row">
+        <div class="col-md-5">
+            <div class="form-group">
+                <label class="control-label">Start</label>
+                <select asp-for="WednesdayStart" class="form-control">
+                    <option value="09:00">09:00</option>
+                    <option value="09:00">10:00</option>
+                    <option value="09:00">11:00</option>
+                    <option value="09:00">12:00</option>
+                    <option value="09:00">13:00</option>
+                    <option value="09:00">14:00</option>
+                    <option value="09:00">15:00</option>
+                    <option value="09:00">16:00</option>
+                </select>
+                <span asp-validation-for="WednesdayStart" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-2">
+            tot
+        </div>
+        <div class="col-md-5">
+            <div class="form-group">
+                <label class="control-label">Eind</label>
+                <select asp-for="WednesdayEnd" class="form-control">
+                    <option value="09:00">10:00</option>
+                    <option value="09:00">11:00</option>
+                    <option value="09:00">12:00</option>
+                    <option value="09:00">13:00</option>
+                    <option value="09:00">14:00</option>
+                    <option value="09:00">15:00</option>
+                    <option value="09:00">16:00</option>
+                    <option value="09:00">17:00</option>
+                </select>
+                <span asp-validation-for="WednesdayEnd" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <h5>Donderdag</h5>
+    <div class="row">
+        <div class="col-md-5">
+            <div class="form-group">
+                <label class="control-label">Start</label>
+                <select asp-for="ThursdayStart" class="form-control">
+                    <option value="09:00">09:00</option>
+                    <option value="09:00">10:00</option>
+                    <option value="09:00">11:00</option>
+                    <option value="09:00">12:00</option>
+                    <option value="09:00">13:00</option>
+                    <option value="09:00">14:00</option>
+                    <option value="09:00">15:00</option>
+                    <option value="09:00">16:00</option>
+                </select>
+                <span asp-validation-for="ThursdayStart" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-2">
+            tot
+        </div>
+        <div class="col-md-5">
+            <div class="form-group">
+                <label class="control-label">Eind</label>
+                <select asp-for="ThursdayEnd" class="form-control">
+                    <option value="09:00">10:00</option>
+                    <option value="09:00">11:00</option>
+                    <option value="09:00">12:00</option>
+                    <option value="09:00">13:00</option>
+                    <option value="09:00">14:00</option>
+                    <option value="09:00">15:00</option>
+                    <option value="09:00">16:00</option>
+                    <option value="09:00">17:00</option>
+                </select>
+                <span asp-validation-for="ThursdayEnd" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <h5>Vrijdag</h5>
+    <div class="row">
+        <div class="col-md-5">
+            <div class="form-group">
+                <label class="control-label">Start</label>
+                <select asp-for="FridayStart" class="form-control">
+                    <option value="09:00">09:00</option>
+                    <option value="09:00">10:00</option>
+                    <option value="09:00">11:00</option>
+                    <option value="09:00">12:00</option>
+                    <option value="09:00">13:00</option>
+                    <option value="09:00">14:00</option>
+                    <option value="09:00">15:00</option>
+                    <option value="09:00">16:00</option>
+                </select>
+                <span asp-validation-for="FridayStart" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-2">
+            tot
+        </div>
+        <div class="col-md-5">
+            <div class="form-group">
+                <label class="control-label">Eind</label>
+                <select asp-for="FridayEnd" class="form-control">
+                    <option value="09:00">10:00</option>
+                    <option value="09:00">11:00</option>
+                    <option value="09:00">12:00</option>
+                    <option value="09:00">13:00</option>
+                    <option value="09:00">14:00</option>
+                    <option value="09:00">15:00</option>
+                    <option value="09:00">16:00</option>
+                    <option value="09:00">17:00</option>
+                </select>
+                <span asp-validation-for="FridayEnd" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="form-group">
+        <input type="submit" value="Create" class="btn btn-primary" />
+    </div>
+</form>
+
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+

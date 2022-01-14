@@ -324,25 +324,29 @@
                         </div>
                     </div>
                     <div class="card-body" style="overflow-y:scroll">
-                        @foreach(var treatment in @Model.Treatments)
+                        @if (Model.Treatments != null)
                         {
-                            
-                                    <div class="row mt-1 form-group">
-                                        <div class="col-md-2">
-                                            <input class="form-control" value="@treatment.Code" disabled />
-                                        </div>
-                                        <div class="col-md-6">
-                                            <input class="form-control" disabled value="@treatment.Description" />
-                                        </div>
-                                        <div class="col-md-2">
-                                            <input class="form-control" disabled value="@treatment.DateTime.ToShortDateString()" />
-                                        </div>
-                                        <div class="col-md-2">
-                                            <a class="btn btn-success" asp-controller="Treatments" asp-action="Details" asp-route-id="@treatment.Id">Details</a>
-                                        </div>
+                            @foreach (var treatment in @Model.Treatments)
+                            {
+
+                                <div class="row mt-1 form-group">
+                                    <div class="col-md-2">
+                                        <input class="form-control" value="@treatment.Code" disabled />
                                     </div>
-                             <hr/>
+                                    <div class="col-md-6">
+                                        <input class="form-control" disabled value="@treatment.Description" />
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input class="form-control" disabled value="@treatment.DateTime.ToShortDateString()" />
+                                    </div>
+                                    <div class="col-md-2">
+                                        <a class="btn btn-success" asp-controller="Treatments" asp-action="Details" asp-route-id="@treatment.Id">Details</a>
+                                    </div>
+                                </div>
+                                <hr />
+                            }
                         }
+
                     </div>
                     <div class="card-footer">
                         @if (User.IsInRole(StaticDetails.StudentEndUser) || User.IsInRole(StaticDetails.TeacherEndUser))

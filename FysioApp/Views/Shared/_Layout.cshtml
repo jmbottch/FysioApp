@@ -40,6 +40,25 @@
                                     <a class="dropdown-item" asp-controller="Treatments" asp-action="Index">Behandelingen</a>
                                 </div>
                             </li>
+
+                            
+                                var claimsIdentity = (ClaimsIdentity)this.User.Identity;
+                                var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+                            
+                            @if (User.IsInRole(StaticDetails.TeacherEndUser))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Teachers" asp-action="Details" asp-route-id="@userId">Mijn Info</a>
+                                </li>
+                            }
+                            @if (User.IsInRole(StaticDetails.StudentEndUser))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Students" asp-action="Details" asp-route-id="@userId">Mijn Info</a>
+                                </li>
+                            }
+
                         }
                         @if (User.IsInRole(StaticDetails.PatientEndUser))
                         {

@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
 {
@@ -25,7 +26,7 @@ namespace Infrastructure.Repositories
 
         public IQueryable<Student> GetStudent(string id)
         {
-            return _business.Student.Where(s => s.Id == id);
+            return _business.Student.Where(s => s.Id == id).Include(a => a.Availability);
         }
 
         public void CreateStudent(Student student)

@@ -3,6 +3,7 @@ using ApplicationCore.Entities;
 using ApplicationCore.Entities.ApiEntities;
 using ApplicationCore.Entities.ApplicationUsers;
 using ApplicationCore.Utility;
+using FysioApp.Extensions;
 using FysioApp.Models.ViewModels.AppointmentViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -14,6 +15,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
+
 
 namespace FysioApp.Controllers
 {
@@ -145,9 +147,15 @@ namespace FysioApp.Controllers
             //find student to check availability
             Student student = _studentRepository.GetStudent(model.Appointment.StudentId).FirstOrDefault();
             //find list of already existing appointments on chosen day
-            IEnumerable<Appointment> appointments = _appointmentRepository.GetAppointments().Where(a => a.DateTime.Date == model.Appointment.DateTime.Date).ToList();
+            IEnumerable<Appointment> appointments = _appointmentRepository.GetAppointments().Where(a => a.DateTime.Date == model.Appointment.DateTime.Date).Where(s => s.StudentId == model.Appointment.StudentId).ToList();
 
-            
+            //find the appointments of the patient tot check for max amount
+            IEnumerable<Appointment> patientAppointments = new List<Appointment>();
+            //find the appointments within the chosen week
+
+            DateTime startofweek = new DateTime();
+            DateTime endofweek = new DateTime();
+                       
 
             if (ModelState.IsValid)
             {
@@ -157,9 +165,11 @@ namespace FysioApp.Controllers
                     return View(modelVM);
                 }
 
+                
+
                 //check if doctor already has appointment at this time
-                if (appointments != null)
-                {
+                if (appointments.Count() > 0)
+                {       
                     foreach (Appointment item in appointments)
                     {                                               
                         if (model.Appointment.DateTime < item.EndTime && model.Appointment.DateTime > item.DateTime) //if new starttime > existing starttime and < existing endtime
@@ -177,7 +187,7 @@ namespace FysioApp.Controllers
                 }
 
                 //if the weekend is chosen
-                if (model.Appointment.DateTime.DayOfWeek.ToString() == "Saturday" || model.Appointment.DateTime.DayOfWeek.ToString() == "Saturday")
+                if (model.Appointment.DateTime.DayOfWeek.ToString() == "Saturday" || model.Appointment.DateTime.DayOfWeek.ToString() == "Sunday")
                 {
                     ModelState.AddModelError(string.Empty, "De praktijk is gesloten in het weekend.");
                     return View(modelVM);
@@ -186,6 +196,14 @@ namespace FysioApp.Controllers
                 //if monday is chosen
                 if (model.Appointment.DateTime.DayOfWeek.ToString() == "Monday")
                 {
+                    startofweek = model.Appointment.DateTime.Date;
+                    endofweek = model.Appointment.DateTime.AddDays(6).Date.AddHours(23).AddMinutes(59);
+                    patientAppointments = _appointmentRepository.GetAppointmentsOfPatientWithinOneWeek(model.Appointment.PatientId, startofweek, endofweek).ToList();
+                    if(this.CanMakeAnotherAppointment(patientAppointments, file.AmountOfSessionsPerWeek) == false)
+                    {
+                        ModelState.AddModelError(string.Empty, "U heeft het maximaal aantal afspraken gepland in de gekozen week.");
+                        return View(modelVM);
+                    }                    
 
                     if (DateTime.Parse(model.Appointment.DateTime.TimeOfDay.ToString()) < DateTime.Parse(student.Availability.MondayStart))
                     {
@@ -202,6 +220,14 @@ namespace FysioApp.Controllers
                 //if tuesday is chosen
                 if (model.Appointment.DateTime.DayOfWeek.ToString() == "Tuesday")
                 {
+                    startofweek = model.Appointment.DateTime.Date.AddDays(-1);
+                    endofweek = model.Appointment.DateTime.AddDays(5).Date.AddHours(23).AddMinutes(59);
+                    patientAppointments = _appointmentRepository.GetAppointmentsOfPatientWithinOneWeek(model.Appointment.PatientId, startofweek, endofweek).ToList();
+                    if (this.CanMakeAnotherAppointment(patientAppointments, file.AmountOfSessionsPerWeek) == false)
+                    {
+                        ModelState.AddModelError(string.Empty, "U heeft het maximaal aantal afspraken gepland in de gekozen week.");
+                        return View(modelVM);
+                    }
 
                     if (DateTime.Parse(model.Appointment.DateTime.TimeOfDay.ToString()) < DateTime.Parse(student.Availability.TuesdayStart))
                     {
@@ -219,6 +245,14 @@ namespace FysioApp.Controllers
                 //if wednesday is chosen
                 if (model.Appointment.DateTime.DayOfWeek.ToString() == "Wednesday")
                 {
+                    startofweek = model.Appointment.DateTime.Date.AddDays(-2);
+                    endofweek = model.Appointment.DateTime.AddDays(4).Date.AddHours(23).AddMinutes(59);
+                    patientAppointments = _appointmentRepository.GetAppointmentsOfPatientWithinOneWeek(model.Appointment.PatientId, startofweek, endofweek).ToList();
+                    if (this.CanMakeAnotherAppointment(patientAppointments, file.AmountOfSessionsPerWeek) == false)
+                    {
+                        ModelState.AddModelError(string.Empty, "U heeft het maximaal aantal afspraken gepland in de gekozen week.");
+                        return View(modelVM);
+                    }
 
                     if (DateTime.Parse(model.Appointment.DateTime.TimeOfDay.ToString()) < DateTime.Parse(student.Availability.WednesdayStart))
                     {
@@ -236,6 +270,14 @@ namespace FysioApp.Controllers
                 //if Thursday is chosen
                 if (model.Appointment.DateTime.DayOfWeek.ToString() == "Thursday")
                 {
+                    startofweek = model.Appointment.DateTime.Date.AddDays(-3);
+                    endofweek = model.Appointment.DateTime.AddDays(3).Date.AddHours(23).AddMinutes(59);
+                    patientAppointments = _appointmentRepository.GetAppointmentsOfPatientWithinOneWeek(model.Appointment.PatientId, startofweek, endofweek).ToList();
+                    if (this.CanMakeAnotherAppointment(patientAppointments, file.AmountOfSessionsPerWeek) == false)
+                    {
+                        ModelState.AddModelError(string.Empty, "U heeft het maximaal aantal afspraken gepland in de gekozen week.");
+                        return View(modelVM);
+                    }
 
                     if (DateTime.Parse(model.Appointment.DateTime.TimeOfDay.ToString()) < DateTime.Parse(student.Availability.ThursdayStart))
                     {
@@ -253,6 +295,14 @@ namespace FysioApp.Controllers
                 //if Friday is chosen
                 if (model.Appointment.DateTime.DayOfWeek.ToString() == "Friday")
                 {
+                    startofweek = model.Appointment.DateTime.Date.AddDays(-4);
+                    endofweek = model.Appointment.DateTime.AddDays(2).Date.AddHours(23).AddMinutes(59);
+                    patientAppointments = _appointmentRepository.GetAppointmentsOfPatientWithinOneWeek(model.Appointment.PatientId, startofweek, endofweek).ToList();
+                    if (this.CanMakeAnotherAppointment(patientAppointments, file.AmountOfSessionsPerWeek) == false)
+                    {
+                        ModelState.AddModelError(string.Empty, "U heeft het maximaal aantal afspraken gepland in de gekozen week.");
+                        return View(modelVM);
+                    }
 
                     if (DateTime.Parse(model.Appointment.DateTime.TimeOfDay.ToString()) < DateTime.Parse(student.Availability.FridayStart))
                     {

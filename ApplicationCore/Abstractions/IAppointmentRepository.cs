@@ -12,6 +12,7 @@ namespace ApplicationCore.Abstractions
         IQueryable<Appointment> GetAppointments();
         IQueryable<Appointment> GetAppointment(int id);
         IQueryable<Appointment> GetAppointmentsByPatientId(string id);
+        IQueryable<Appointment> GetAppointmentsOfPatientWithinOneWeek(string patientId, DateTime startofweek, DateTime endofweek);
         void CreateAppointment(Appointment appointment);
         void UpdateAppointment(int id, Appointment appointment);
         void DeleteAppointment(int id);

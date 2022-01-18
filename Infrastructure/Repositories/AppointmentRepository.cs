@@ -33,6 +33,11 @@ namespace Infrastructure.Repositories
             return _business.Appointment.Where(a => a.PatientId == id).Include(a => a.Student).Include(a => a.Patient).OrderBy(x => x.DateTime);
         }
 
+        public IQueryable<Appointment> GetAppointmentsOfPatientWithinOneWeek(string patientId, DateTime startofweek, DateTime endofweek)
+        {
+            return _business.Appointment.Where(a => a.PatientId == patientId).Where(a => a.DateTime >= startofweek && a.DateTime <= endofweek);
+        }
+
         public void CreateAppointment(Appointment appointment)
         {
             _business.Appointment.Add(appointment);

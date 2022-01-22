@@ -19,18 +19,24 @@ namespace FysioApp.Controllers
     {
         private readonly IPatientRepository _patientRepository;
         private readonly IIdentityUserRepository _identityUserRepository;
-        private readonly SignInManager<IdentityUser> _signInManager;
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly ILogger<RegisterPatientViewModel> _logger;
-        private readonly RoleManager<IdentityRole> _roleManager;
+        //private readonly SignInManager<IdentityUser> _signInManager;
+        ////private readonly UserManager<IdentityUser> _userManager;
+        //private readonly ILogger<RegisterPatientViewModel> _logger;
+        //private readonly RoleManager<IdentityRole> _roleManager;
 
-        public PatientsController(IIdentityUserRepository identityUserRepository, IPatientRepository patientRepository, SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager, ILogger<RegisterPatientViewModel> logger, RoleManager<IdentityRole> roleManager)
+        public PatientsController(IIdentityUserRepository identityUserRepository, IPatientRepository patientRepository
+
+            //SignInManager<IdentityUser> signInManager, 
+            //UserManager<IdentityUser> userManager, 
+            //ILogger<RegisterPatientViewModel> logger, 
+            //RoleManager<IdentityRole> roleManager
+            )
         {
             
-            _signInManager = signInManager;
-            _userManager = userManager;
-            _logger = logger;
-            _roleManager = roleManager;
+            //_signInManager = signInManager;
+            //_userManager = userManager;
+            //_logger = logger;
+            //_roleManager = roleManager;
             _patientRepository = patientRepository;
             _identityUserRepository = identityUserRepository;
         }
@@ -100,10 +106,16 @@ namespace FysioApp.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = StaticDetails.StudentEndUser)]
-        public async Task<IActionResult> Create(RegisterPatientViewModel model, string returnUrl = null)
+        public async Task<IActionResult> Create(RegisterPatientViewModel model)
         {
             if (ModelState.IsValid)
             {
+                if(model.DateOfBirth.AddYears(16) >= DateTime.Now)
+                {
+                    ModelState.AddModelError(string.Empty, "Patient is niet ouder dan 16.");
+                    return View(model);
+                }
+
                 var patient = new Patient()
                 {
                     Email = model.Email,
@@ -131,7 +143,7 @@ namespace FysioApp.Controllers
 
                     patient.Picture = p1;
 
-                    
+
 
                 }
                 _patientRepository.CreatePatient(patient);

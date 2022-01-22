@@ -49,18 +49,18 @@ namespace FysioApp.Controllers
         }
 
         //GET for Index
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
             if (User.IsInRole(StaticDetails.PatientEndUser))
             {
 
                 var claimsIdentity = (ClaimsIdentity)this.User.Identity;
                 var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
-                return View(await _appointmentRepository.GetAppointmentsByPatientId(userId).ToListAsync());
+                return View(_appointmentRepository.GetAppointmentsByPatientId(userId).ToList());
 
             }
 
-            return View(await _appointmentRepository.GetAppointments().ToListAsync());
+            return View(_appointmentRepository.GetAppointments().ToListAsync());
         }
 
         //Get for Create
@@ -142,6 +142,7 @@ namespace FysioApp.Controllers
                 Appointment = model.Appointment
             };
 
+            Debug.WriteLine(_patientFileRepository);
             //find patientfile to check how long an appointment will last and how many per week are permitted
             PatientFile file = _patientFileRepository.GetFileByPatientId(model.Appointment.PatientId).FirstOrDefault();
             //find student to check availability

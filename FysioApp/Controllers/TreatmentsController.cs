@@ -153,8 +153,9 @@ namespace FysioApp.Controllers
                 PatientFile patientFileFromDb = await _patientFileRepository.GetFile(model.Treatment.PatientFileId).FirstOrDefaultAsync();
                 if (model.Treatment.DateTime > patientFileFromDb.DateOfDeparture || model.Treatment.DateTime < patientFileFromDb.DateOfArrival)
                 {
-                    //add modelstate error, invalid datetime
-                 }
+                    ModelState.AddModelError(string.Empty, "Op dit moment is de patient niet ingeschreven."); //if yes but no explanation is given
+                    return View(vm);
+                }
                 if (operation.DescriptionRequired == true)
                 {
                     if(model.Treatment.Explanation != null)

@@ -31,13 +31,11 @@ namespace FysioApp.Controllers
             IAvailabilityRepository availabilityRepository,
             SignInManager<IdentityUser> signInManager,
             UserManager<IdentityUser> userManager,
-            ILogger<RegisterStudentViewModel> logger,
             RoleManager<IdentityRole> roleManager          
             )
         {            
             _signInManager = signInManager;
             _userManager = userManager;
-            _logger = logger;
             _roleManager = roleManager;
             _studentRepository = studentRepository;
             _identityUserRepository = identityUserRepository;

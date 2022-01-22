@@ -48,7 +48,7 @@ namespace Infrastructure.Repositories
 
         public IQueryable<Treatment> GetTreatmentsByPatientFileId(int id)
         {
-            throw new NotImplementedException();
+            return _business.Treatments.Where(t => t.PatientFileId == id).Include(s => s.Student).Include(pf => pf.PatientFile).Include(p => p.PatientFile.Patient).OrderBy(x => x.DateTime);
         }
 
         public void UpdateTreatment(int id, Treatment treatment)

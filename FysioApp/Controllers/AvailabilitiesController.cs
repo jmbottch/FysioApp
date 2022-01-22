@@ -44,6 +44,16 @@ namespace FysioApp.Controllers
             return View(availability);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(Availability availability)
+        {
+            _availabilityRepository.CreateAvailability(availability);
+            _availabilityRepository.Save();
+            return RedirectToAction(nameof(Index));
+
+        }
+
         [HttpPost, ActionName("Edit")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Availability model)

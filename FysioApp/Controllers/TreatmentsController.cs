@@ -48,7 +48,7 @@ namespace FysioApp.Controllers
         public async Task<IActionResult> Create(int patientfileid)
         {
             IEnumerable<Operation> operations = new List<Operation>();
-            HttpResponseMessage response = await client.GetAsync("https://localhost:44326/api/Operations");
+            HttpResponseMessage response = await client.GetAsync("http://myfysiowebapi.azurewebsites.net/api/Operations");
             if (response.IsSuccessStatusCode)
             {
                 operations = await response.Content.ReadAsAsync<IEnumerable<Operation>>();
@@ -71,7 +71,7 @@ namespace FysioApp.Controllers
         public async Task<IActionResult> Edit(int id)
         {
             IEnumerable<Operation> operations = new List<Operation>();
-            HttpResponseMessage response = await client.GetAsync("https://localhost:44326/api/Operations");
+            HttpResponseMessage response = await client.GetAsync("http://myfysiowebapi.azurewebsites.net/api/Operations");
             if (response.IsSuccessStatusCode)
             {
                 operations = await response.Content.ReadAsAsync<IEnumerable<Operation>>();
@@ -114,7 +114,7 @@ namespace FysioApp.Controllers
         {
             //api call for retrieving operations, for when the form fails.
             IEnumerable<Operation> operations = new List<Operation>();
-            HttpResponseMessage response = await client.GetAsync("https://localhost:44326/api/Operations");
+            HttpResponseMessage response = await client.GetAsync("http://myfysiowebapi.azurewebsites.net/api/Operations");
             if (response.IsSuccessStatusCode)
             {
                 operations = await response.Content.ReadAsAsync<IEnumerable<Operation>>();
@@ -128,7 +128,7 @@ namespace FysioApp.Controllers
                 Teachers = _teacherRepository.GetTeachers().ToList()
             };
             //api call for retrieving single operation. When one is selected and submitted in the form, this operation will find the correct object.
-            string url = "https://localhost:44326/api/Operations/" + model.Treatment.Code;
+            string url = "http://myfysiowebapi.azurewebsites.net/api/Operations/" + model.Treatment.Code;
             Operation operation = new Operation();
             HttpResponseMessage response1 = await client.GetAsync(url);
             if (response.IsSuccessStatusCode)
@@ -191,7 +191,7 @@ namespace FysioApp.Controllers
         {
             //api call for retrieving operations, for when the form fails.
             IEnumerable<Operation> operations = new List<Operation>();
-            HttpResponseMessage response = await client.GetAsync("https://localhost:44326/api/Operations");
+            HttpResponseMessage response = await client.GetAsync("http://myfysiowebapi.azurewebsites.net/api/Operations");
             if (response.IsSuccessStatusCode)
             {
                 operations = await response.Content.ReadAsAsync<IEnumerable<Operation>>();
@@ -205,7 +205,7 @@ namespace FysioApp.Controllers
                 Teachers = _teacherRepository.GetTeachers().ToList()
             };
             //api call for retrieving single operation. When one is selected and submitted in the form, this operation will find the correct object.
-            string url = "https://localhost:44326/api/Operations/" + model.Treatment.Code;
+            string url = "http://myfysiowebapi.azurewebsites.net/api/Operations/" + model.Treatment.Code;
             Operation operation = new Operation();
             HttpResponseMessage response1 = await client.GetAsync(url);
             if (response.IsSuccessStatusCode)

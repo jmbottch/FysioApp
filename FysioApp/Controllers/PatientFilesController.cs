@@ -81,7 +81,7 @@ namespace FysioApp.Controllers
             }
 
             IEnumerable<Diagnose> diagnoses = new List<Diagnose>();
-            HttpResponseMessage response = await client.GetAsync("https://localhost:44326/api/Diagnoses");
+            HttpResponseMessage response = await client.GetAsync("http://myfysiowebapi.azurewebsites.net/api/Diagnoses");
             if (response.IsSuccessStatusCode)
             {
                 diagnoses = await response.Content.ReadAsAsync<IEnumerable<Diagnose>>();
@@ -108,7 +108,7 @@ namespace FysioApp.Controllers
         {
 
             IEnumerable<Diagnose> diagnoses = new List<Diagnose>();
-            HttpResponseMessage response = await client.GetAsync("https://localhost:44326/api/Diagnoses");
+            HttpResponseMessage response = await client.GetAsync("http://myfysiowebapi.azurewebsites.net/api/Diagnoses");
             if(response.IsSuccessStatusCode)
             {
                 diagnoses = await response.Content.ReadAsAsync<IEnumerable<Diagnose>>();
@@ -136,7 +136,7 @@ namespace FysioApp.Controllers
             {
                 ModelState.AddModelError(string.Empty, "Er is reeds een dossier gemaakt voor deze patient");
             }
-            string url = "https://localhost:44326/api/Diagnoses/" + model.PatientFile.DiagnoseCode;
+            string url = "http://myfysiowebapi.azurewebsites.net/api/Diagnoses/" + model.PatientFile.DiagnoseCode;
             Diagnose diagnose = new Diagnose();
             HttpResponseMessage response = await client.GetAsync(url);
             if (response.IsSuccessStatusCode)
@@ -179,7 +179,7 @@ namespace FysioApp.Controllers
                     return NotFound();
                 }
 
-                string url = "https://localhost:44326/api/Diagnoses/" + model.PatientFile.DiagnoseCode;
+                string url = "http://myfysiowebapi.azurewebsites.net/api/Diagnoses/" + model.PatientFile.DiagnoseCode;
                 Diagnose diagnose = new Diagnose();
                 HttpResponseMessage response = await client.GetAsync(url);
                 if (response.IsSuccessStatusCode)

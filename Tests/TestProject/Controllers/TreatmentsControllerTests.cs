@@ -50,6 +50,7 @@ namespace TestProject.Controllers
             {
                 Treatment = new Treatment()
                 {
+                    Id = 1,
                     Code = "1000", //explanation required
                     Explanation = "TestExplanation", //explanation given
                     Room = "Oefenzaal",
@@ -106,6 +107,7 @@ namespace TestProject.Controllers
             {
                 Treatment = new Treatment()
                 {
+                    Id = 2,
                     Code = "1000", // explanation required
                     Explanation = null, //not given
                     Room = "Oefenzaal",
@@ -162,6 +164,7 @@ namespace TestProject.Controllers
             {
                 Treatment = new Treatment()
                 {
+                    Id = 3,
                     Code = "1101", //expl not required
                     Explanation = "Test Explanation", //given anyway
                     Room = "Oefenzaal",
@@ -219,6 +222,7 @@ namespace TestProject.Controllers
             {
                 Treatment = new Treatment()
                 {
+                    Id = 4,
                     Code = "1101", //expl not required
                     Explanation = null,
                     Room = "Oefenzaal",
@@ -277,6 +281,7 @@ namespace TestProject.Controllers
             {
                 Treatment = new Treatment()
                 {
+                    Id = 5,
                     Code = "1101",
                     Explanation = null,
                     Room = "Oefenzaal",
@@ -335,6 +340,7 @@ namespace TestProject.Controllers
             {
                 Treatment = new Treatment()
                 {
+                    Id = 6,
                     Code = "1101",
                     Explanation = null,
                     Room = "Oefenzaal",

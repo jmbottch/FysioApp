@@ -68,6 +68,7 @@ namespace TestProject.Controllers
             //if appointment.endtime > student.availability.endtime, error            
             Appointment appointment = new Appointment()
             {
+                Id = 1,
                 PatientId = "a",
                 StudentId = "b",
                 //DateTime = DateTime.Now.Date.AddYears(5).AddHours(10), //this is a valid datetime
@@ -138,6 +139,7 @@ namespace TestProject.Controllers
 
             Appointment appointment = new Appointment()
             {
+                Id = 2,
                 PatientId = "a",
                 StudentId = "b",
                 //DateTime = DateTime.Now.Date.AddYears(5).AddHours(10), //this is a valid datetime
@@ -208,6 +210,7 @@ namespace TestProject.Controllers
 
             Appointment appointment = new Appointment()
             {
+                Id = 3,
                 PatientId = "a",
                 StudentId = "b",
                 DateTime = DateTime.Now.Date.AddYears(5).AddHours(10), //this is a valid datetime
@@ -217,6 +220,7 @@ namespace TestProject.Controllers
 
             Appointment appointment2 = new Appointment()
             {
+                Id = 4,
                 PatientId = "a",
                 StudentId = "b",
                 DateTime = DateTime.Now.Date.AddYears(5).AddHours(10).AddMinutes(30), //this is a valid datetime but an appointment has already been planned.
@@ -292,6 +296,7 @@ namespace TestProject.Controllers
 
             Appointment appointment = new Appointment()
             {
+                Id = 5,
                 PatientId = "a",
                 StudentId = "b",
                 DateTime = DateTime.Now.Date.AddYears(5).AddHours(10), //this is a valid datetime.
@@ -301,6 +306,7 @@ namespace TestProject.Controllers
 
             Appointment appointment2 = new Appointment()
             {
+                Id = 6,
                 PatientId = "a",
                 StudentId = "b",
                 DateTime = DateTime.Now.Date.AddYears(5).AddHours(12).AddMinutes(30), //this is a valid datetime.
@@ -310,6 +316,7 @@ namespace TestProject.Controllers
             //this will be the object the test will do checks on
             Appointment appointment3 = new Appointment()
             {
+                Id = 7,
                 PatientId = "a",
                 StudentId = "b",
                 DateTime = DateTime.Now.Date.AddYears(5).AddHours(14).AddMinutes(45), //this is a valid datetime but the maximum amount of appointments this week has been reached
@@ -391,6 +398,7 @@ namespace TestProject.Controllers
 
             Appointment appointment = new Appointment()
             {
+                Id = 8,
                 PatientId = "a",
                 StudentId = "b",
                 DateTime = DateTime.Now.Date.AddHours(14), //this is a valid datetime.
@@ -457,6 +465,7 @@ namespace TestProject.Controllers
 
             Appointment appointment = new Appointment()
             {
+                Id = 9,
                 PatientId = "a",
                 StudentId = "b",
                 DateTime = DateTime.Now.Date.AddHours(14), //this is a valid datetime.

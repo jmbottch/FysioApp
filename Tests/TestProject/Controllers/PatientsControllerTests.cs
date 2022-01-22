@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -34,7 +35,8 @@ namespace TestProject.Controllers
                     "TestAuthentication"
                     ));
 
-            var patient = helper.CreateTestPatient();
+            var patient = helper.CreateTestPatient();           
+
             RegisterPatientViewModel model = new RegisterPatientViewModel()
             {
                 Email = patient.Email,
@@ -44,13 +46,13 @@ namespace TestProject.Controllers
                 AvansNumber = patient.AvansNumber,
                 AvansRole = patient.AvansRole,
                 Gender = patient.Gender,
-                DateOfBirth = patient.DateOfBirth,
+                DateOfBirth = DateTime.Now.AddYears(-20),
             };
             var patientRepo = helper.GetInMemoryPatientRepo();
 
             var sut = new PatientsController(new Mock<IIdentityUserRepository>().Object, patientRepo);
             sut.ControllerContext = new ControllerContext();
-            sut.ControllerContext.HttpContext = new DefaultHttpContext { User = user};
+            sut.ControllerContext.HttpContext = new DefaultHttpContext { User = user };
 
             await sut.Create(model);
 

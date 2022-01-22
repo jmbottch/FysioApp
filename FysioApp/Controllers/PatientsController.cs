@@ -127,25 +127,25 @@ namespace FysioApp.Controllers
                     AvansRole = model.AvansRole,
                     Gender = model.Gender
                 };
-                var files = HttpContext.Request.Form.Files;
-                var lenghtExists = files.Any(x => x.Length > 0);
-                if (lenghtExists)
+                if(HttpContext.Request.Form.Files != null)
                 {
-                    byte[] p1 = null;
-                    using (var fs1 = files[0].OpenReadStream())
+                    var files = HttpContext.Request.Form.Files;
+                    var lenghtExists = files.Any(x => x.Length > 0);
+                    if (lenghtExists)
                     {
-                        using (var ms1 = new MemoryStream())
+                        byte[] p1 = null;
+                        using (var fs1 = files[0].OpenReadStream())
                         {
-                            fs1.CopyTo(ms1);
-                            p1 = ms1.ToArray();
+                            using (var ms1 = new MemoryStream())
+                            {
+                                fs1.CopyTo(ms1);
+                                p1 = ms1.ToArray();
+                            }
                         }
+                        patient.Picture = p1;
                     }
-
-                    patient.Picture = p1;
-
-
-
                 }
+                
                 _patientRepository.CreatePatient(patient);
                 _patientRepository.Save();
 

@@ -160,23 +160,11 @@ namespace FysioApp.Controllers
         [ValidateAntiForgeryToken]
         [Authorize(Roles = StaticDetails.TeacherEndUser)]
         public async Task<IActionResult> Edit(string id, Patient patient)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-            if (id != patient.Id)
-            {
-                return NotFound();
-            }
-
+        {        
             IdentityUser identityPatientFromDb = await _identityUserRepository.GetUser(id).FirstOrDefaultAsync();
             
             Patient patientFromDb = await _patientRepository.GetPatient(id).FirstOrDefaultAsync();
-            if (patientFromDb == null)
-            {
-                return NotFound();
-            }
+            
             if (ModelState.IsValid)
             {
                 if (patient.DateOfBirth.AddYears(16) >= DateTime.Now)

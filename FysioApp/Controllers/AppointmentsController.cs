@@ -166,7 +166,22 @@ namespace FysioApp.Controllers
                     return View(modelVM);
                 }
 
-                
+                if(file == null)
+                {
+                    ModelState.AddModelError(string.Empty, "U heeft nog geen dossier.");
+                    return View(modelVM);
+                }
+
+                if(model.Appointment.DateTime < file.DateOfArrival)
+                {
+                    ModelState.AddModelError(string.Empty, "Deze datum ligt voor uw datum van inschrijving.");
+                    return View(modelVM);
+                }
+                if (model.Appointment.DateTime > file.DateOfDeparture)
+                {
+                    ModelState.AddModelError(string.Empty, "Deze datum ligt na uw datum van vertrek.");
+                    return View(modelVM);
+                }
 
                 //check if doctor already has appointment at this time
                 if (appointments.Count() > 0)

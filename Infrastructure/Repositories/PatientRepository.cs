@@ -44,7 +44,7 @@ namespace Infrastructure.Repositories
 
         public void Save()
         {
-            _business.SaveChanges();
+           _business.SaveChangesAsync();
         }
 
     }

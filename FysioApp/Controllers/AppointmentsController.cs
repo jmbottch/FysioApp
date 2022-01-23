@@ -64,7 +64,7 @@ namespace FysioApp.Controllers
         }
 
         //Get for Create
-        public async Task<IActionResult> Create()
+        public IActionResult Create()
         {
             var claimsIdentity = (ClaimsIdentity)this.User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
@@ -144,9 +144,9 @@ namespace FysioApp.Controllers
 
             Debug.WriteLine(_patientFileRepository);
             //find patientfile to check how long an appointment will last and how many per week are permitted
-            PatientFile file = _patientFileRepository.GetFileByPatientId(model.Appointment.PatientId).FirstOrDefault();
+            PatientFile file = await _patientFileRepository.GetFileByPatientId(model.Appointment.PatientId).FirstOrDefaultAsync();
             //find student to check availability
-            Student student = _studentRepository.GetStudent(model.Appointment.StudentId).FirstOrDefault();
+            Student student = await _studentRepository.GetStudent(model.Appointment.StudentId).FirstOrDefaultAsync();
             //find list of already existing appointments on chosen day
             IEnumerable<Appointment> appointments = _appointmentRepository.GetAppointments().Where(a => a.DateTime.Date == model.Appointment.DateTime.Date).Where(s => s.StudentId == model.Appointment.StudentId).ToList();
 

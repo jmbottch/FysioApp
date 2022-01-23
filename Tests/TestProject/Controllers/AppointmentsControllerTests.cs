@@ -317,6 +317,7 @@ namespace TestProject.Controllers
             await sut.Cancel(appointment.Id);
 
             var foundAppointment = appointmentRepo.GetAppointment(appointment.Id).FirstOrDefault();
+            Console.WriteLine(foundAppointment);
             var result = foundAppointment.IsCancelled;
 
             //assert IsCancelled for the appointment is still false

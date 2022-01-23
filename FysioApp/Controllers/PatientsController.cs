@@ -69,7 +69,7 @@ namespace FysioApp.Controllers
         }
 
         //Get for Edit
-        [Authorize(Roles = StaticDetails.StudentEndUser)]
+        [Authorize(Roles = StaticDetails.TeacherEndUser)]
         //[Authorize(Roles = StaticDetails.TeacherEndUser)]
         public async Task<IActionResult> Edit(string id)
         {
@@ -105,7 +105,7 @@ namespace FysioApp.Controllers
         //POST for Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = StaticDetails.StudentEndUser)]
+        [Authorize(Roles = StaticDetails.TeacherEndUser)]
         public async Task<IActionResult> Create(RegisterPatientViewModel model)
         {
             if (ModelState.IsValid)
@@ -156,9 +156,9 @@ namespace FysioApp.Controllers
         }
 
         //POST for Edit
-        [Authorize(Roles = StaticDetails.StudentEndUser)]
         [HttpPost, ActionName("Edit")]
         [ValidateAntiForgeryToken]
+        //[Authorize(Roles = StaticDetails.TeacherEndUser)]
         public async Task<IActionResult> Edit(string id, Patient patient)
         {
             if (id == null)
@@ -169,6 +169,7 @@ namespace FysioApp.Controllers
             {
                 return NotFound();
             }
+
             IdentityUser identityPatientFromDb = await _identityUserRepository.GetUser(id).FirstOrDefaultAsync();
             if (identityPatientFromDb == null)
             {
@@ -181,6 +182,12 @@ namespace FysioApp.Controllers
             }
             if (ModelState.IsValid)
             {
+                if (patient.DateOfBirth.AddYears(16) >= DateTime.Now)
+                {
+                    ModelState.AddModelError(string.Empty, "Patient is niet ouder dan 16.");
+                    return View(patient);
+                }
+
                 identityPatientFromDb.Email = patient.Email;
                 identityPatientFromDb.UserName = patient.Email;
                 identityPatientFromDb.NormalizedEmail = patient.Email.ToUpper();
@@ -219,7 +226,7 @@ namespace FysioApp.Controllers
         }
 
         //POST action for Delete
-        [Authorize(Roles = StaticDetails.StudentEndUser)]
+        [Authorize(Roles = StaticDetails.TeacherEndUser)]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(string id)

@@ -43,7 +43,9 @@ namespace Infrastructure.Repositories
         public void DeleteUser(string id)
         {
             var user = _identity.Users.FirstOrDefault(t => t.Id == id);
-            _identity.Users.Remove(user);
+            if (user != null) {
+                _identity.Users.Remove(user);
+            }
         }
         public void Save()
         {

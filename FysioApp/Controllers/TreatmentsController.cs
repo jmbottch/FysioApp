@@ -136,6 +136,7 @@ namespace FysioApp.Controllers
                 operation = await response1.Content.ReadAsAsync<Operation>();
                 model.Treatment.Description = operation.Description;
             }
+            
             //create new Treatment object
             Treatment treatment = new Treatment()
             {

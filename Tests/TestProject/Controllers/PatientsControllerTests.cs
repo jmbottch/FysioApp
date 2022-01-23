@@ -19,11 +19,11 @@ namespace TestProject.Controllers
 {
     public class PatientsControllerTests
     {
-        
+        Testhelper helper = new Testhelper();
+
         [Fact]
         public async void Create_Patient_Returns_Error_When_Patient_Is_Younger_Than_Sixteen()
-        {
-            var helper = new Testhelper();
+        {            
 
             var user = new ClaimsPrincipal(
                 new ClaimsIdentity(
@@ -35,17 +35,16 @@ namespace TestProject.Controllers
                     },
                     "TestAuthentication"
                     ));
-
-            var patient = helper.CreateTestPatient();
+            
             RegisterPatientViewModel model = new RegisterPatientViewModel()
             {
-                Email = patient.Email,
-                FirstName = patient.FirstName,
-                LastName = patient.LastName,
-                PhoneNumber = patient.PhoneNumber,
-                AvansNumber = patient.AvansNumber,
-                AvansRole = patient.AvansRole,
-                Gender = patient.Gender,
+                Email = "testing@email.com",
+                FirstName = "testing",
+                LastName = "patient",
+                PhoneNumber = "061234567",
+                AvansNumber = 2114785,
+                AvansRole = "1",
+                Gender = "0",
                 DateOfBirth = DateTime.Now.AddYears(-10)
             };
             var patientRepo = helper.GetInMemoryPatientRepo();
@@ -58,7 +57,7 @@ namespace TestProject.Controllers
 
             var result = patientRepo.GetPatients().ToList().Count();
 
-            Assert.Equal(0, result);
+            Assert.Equal(1, result); //only the original testpatient from the testhelper will be in the db
         }
     }
 }

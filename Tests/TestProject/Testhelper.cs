@@ -22,9 +22,39 @@ namespace TestProject
 
             var dbContextOptions = builder.Options;
             context = new BusinessDbContext(dbContextOptions);
-            // Delete existing db before creating a new one
-            context.Database.EnsureDeleted();
-            context.Database.EnsureCreated();
+            // Delete existing db before creating a new one                       
+            ClearDb();
+        }
+
+        public async void ClearDb()
+        {
+           await context.Database.EnsureDeletedAsync();
+           await context.Database.EnsureCreatedAsync();
+
+            Availability availability = CreateTestAvailability();
+            var availabilityRepo = GetInMemoryAvailabilityRepo();
+            availabilityRepo.CreateAvailability(availability);
+            availabilityRepo.Save();
+
+            Student student = CreateTestStudent();
+            var studentRepo = GetInMemoryStudentRepo();
+            studentRepo.CreateStudent(student);
+            studentRepo.Save();
+
+            Teacher teacher = CreateTestTeacher();
+            var teacherRepo = GetInMemoryTeacherRepo();
+            teacherRepo.CreateTeacher(teacher);
+            teacherRepo.Save();
+
+            Patient patient = CreateTestPatient();
+            var patientRepo = GetInMemoryPatientRepo();
+            patientRepo.CreatePatient(patient);
+            patientRepo.Save();
+
+            PatientFile file = CreateTestFile();
+            var fileRepo = GetInMemoryPatientFileRepo();
+            fileRepo.CreateFile(file);
+            fileRepo.Save();
         }
 
         public IAvailabilityRepository GetInMemoryAvailabilityRepo()
@@ -135,6 +165,7 @@ namespace TestProject
         {
             PatientFile file = new PatientFile()
             {
+                Id = 20,
                 PatientId = "a",
                 age = 23,
                 ComplaintsDescription = "SomeDescription",

@@ -106,7 +106,7 @@ namespace FysioApp.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = StaticDetails.TeacherEndUser)]
-        public async Task<IActionResult> Create(RegisterPatientViewModel model)
+        public IActionResult Create(RegisterPatientViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -158,7 +158,7 @@ namespace FysioApp.Controllers
         //POST for Edit
         [HttpPost, ActionName("Edit")]
         [ValidateAntiForgeryToken]
-        //[Authorize(Roles = StaticDetails.TeacherEndUser)]
+        [Authorize(Roles = StaticDetails.TeacherEndUser)]
         public async Task<IActionResult> Edit(string id, Patient patient)
         {
             if (id == null)
@@ -171,10 +171,7 @@ namespace FysioApp.Controllers
             }
 
             IdentityUser identityPatientFromDb = await _identityUserRepository.GetUser(id).FirstOrDefaultAsync();
-            if (identityPatientFromDb == null)
-            {
-                return NotFound();
-            }
+            
             Patient patientFromDb = await _patientRepository.GetPatient(id).FirstOrDefaultAsync();
             if (patientFromDb == null)
             {
@@ -187,11 +184,13 @@ namespace FysioApp.Controllers
                     ModelState.AddModelError(string.Empty, "Patient is niet ouder dan 16.");
                     return View(patient);
                 }
-
-                identityPatientFromDb.Email = patient.Email;
-                identityPatientFromDb.UserName = patient.Email;
-                identityPatientFromDb.NormalizedEmail = patient.Email.ToUpper();
-                identityPatientFromDb.NormalizedUserName = patient.Email.ToUpper();
+                if (identityPatientFromDb != null)
+                {
+                    identityPatientFromDb.Email = patient.Email;
+                    identityPatientFromDb.UserName = patient.Email;
+                    identityPatientFromDb.NormalizedEmail = patient.Email.ToUpper();
+                    identityPatientFromDb.NormalizedUserName = patient.Email.ToUpper();
+                }               
 
                 patientFromDb.Email = patient.Email;
                 patientFromDb.FirstName = patient.FirstName;

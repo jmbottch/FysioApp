@@ -31,14 +31,14 @@ namespace FysioApp.Controllers
             return View();
         }
 
-        public async Task<IActionResult> Create()
+        public IActionResult Create()
         {
             Availability availabilty = new Availability();
             return View(availabilty);
 
         }
 
-        public async Task<IActionResult> Edit(int id)
+        public IActionResult Edit(int id)
         {
             Availability availability = _availabilityRepository.GetAvailability(id).FirstOrDefault();
             return View(availability);
@@ -46,7 +46,7 @@ namespace FysioApp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Availability availability)
+        public IActionResult Create(Availability availability)
         {
             _availabilityRepository.CreateAvailability(availability);
             _availabilityRepository.Save();
@@ -56,7 +56,7 @@ namespace FysioApp.Controllers
 
         [HttpPost, ActionName("Edit")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Availability model)
+        public IActionResult Edit(Availability model)
         {
             var claimsIdentity = (ClaimsIdentity)this.User.Identity;
             string userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;

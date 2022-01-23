@@ -142,7 +142,7 @@ namespace FysioApp.Controllers
                 Appointment = model.Appointment
             };
 
-            Debug.WriteLine(_patientFileRepository);
+           
             //find patientfile to check how long an appointment will last and how many per week are permitted
             PatientFile file = await _patientFileRepository.GetFileByPatientId(model.Appointment.PatientId).FirstOrDefaultAsync();
             //find student to check availability
@@ -367,8 +367,22 @@ namespace FysioApp.Controllers
 
             };
 
+            //find patientfile to check how long an appointment will last and how many per week are permitted
+            PatientFile file = await _patientFileRepository.GetFileByPatientId(model.Appointment.PatientId).FirstOrDefaultAsync();
+            //find student to check availability
+            Student student = await _studentRepository.GetStudent(model.Appointment.StudentId).FirstOrDefaultAsync();
+            //find list of already existing appointments on chosen day
+            IEnumerable<Appointment> appointments = _appointmentRepository.GetAppointments().Where(a => a.DateTime.Date == model.Appointment.DateTime.Date).Where(s => s.StudentId == model.Appointment.StudentId).ToList();
+
+            //find the appointments of the patient tot check for max amount
+            IEnumerable<Appointment> patientAppointments = new List<Appointment>();
+            //find the appointments within the chosen week          
+
+
             if (ModelState.IsValid)
             {
+
+
                 Appointment appointmentFromDb = await _appointmentRepository.GetAppointment(model.Appointment.Id).FirstOrDefaultAsync();
                 if (appointmentFromDb == null)
                 {
@@ -385,6 +399,116 @@ namespace FysioApp.Controllers
                 {
                     ModelState.AddModelError(string.Empty, "Datum en Tijd moet in de toekomst liggen."); // if not return with error
                     return View(modelVM);
+                }
+
+                //check if doctor already has appointment at this time
+                if (appointments.Count() > 0)
+                {
+                    foreach (Appointment item in appointments)
+                    {
+                        if (model.Appointment.DateTime < item.EndTime && model.Appointment.DateTime > item.DateTime) //if new starttime > existing starttime and < existing endtime
+                        {
+
+                            ModelState.AddModelError(string.Empty, "De behandelaar heeft al een afspraak op dit tijdstip");
+                            return View(modelVM);
+                        }
+                        if (model.Appointment.DateTime.AddHours(file.SessionDuration) < item.EndTime && model.Appointment.DateTime.AddHours(file.SessionDuration) > item.DateTime) //if new endtime < existing endtime and > existing starttime
+                        {
+                            ModelState.AddModelError(string.Empty, "De behandelaar heeft al een afspraak op dit tijdstip");
+                            return View(modelVM);
+                        }
+                    }
+                }
+
+                //if the weekend is chosen
+                if (model.Appointment.DateTime.DayOfWeek.ToString() == "Saturday" || model.Appointment.DateTime.DayOfWeek.ToString() == "Sunday")
+                {
+                    ModelState.AddModelError(string.Empty, "De praktijk is gesloten in het weekend.");
+                    return View(modelVM);
+                }
+
+                //if monday is chosen
+                if (model.Appointment.DateTime.DayOfWeek.ToString() == "Monday")
+                {
+                   
+                    if (DateTime.Parse(model.Appointment.DateTime.TimeOfDay.ToString()) < DateTime.Parse(student.Availability.MondayStart))
+                    {
+                        ModelState.AddModelError(string.Empty, "Het gekozen tijdstip is te vroeg.");
+                        return View(modelVM);
+                    }
+
+                    if (DateTime.Parse(model.Appointment.DateTime.AddHours(file.SessionDuration).TimeOfDay.ToString()) > DateTime.Parse(student.Availability.MondayEnd))
+                    {
+                        ModelState.AddModelError(string.Empty, "Het gekozen tijdstip is te laat.");
+                        return View(modelVM);
+                    }
+                }
+                //if tuesday is chosen
+                if (model.Appointment.DateTime.DayOfWeek.ToString() == "Tuesday")
+                {
+                   
+                    if (DateTime.Parse(model.Appointment.DateTime.TimeOfDay.ToString()) < DateTime.Parse(student.Availability.TuesdayStart))
+                    {
+                        ModelState.AddModelError(string.Empty, "Het gekozen tijdstip is te vroeg.");
+                        return View(modelVM);
+                    }
+
+                    if (DateTime.Parse(model.Appointment.DateTime.AddHours(file.SessionDuration).TimeOfDay.ToString()) > DateTime.Parse(student.Availability.TuesdayEnd))
+                    {
+                        ModelState.AddModelError(string.Empty, "Het gekozen tijdstip is te laat.");
+                        return View(modelVM);
+                    }
+                }
+
+                //if wednesday is chosen
+                if (model.Appointment.DateTime.DayOfWeek.ToString() == "Wednesday")
+                {
+                    
+                    if (DateTime.Parse(model.Appointment.DateTime.TimeOfDay.ToString()) < DateTime.Parse(student.Availability.WednesdayStart))
+                    {
+                        ModelState.AddModelError(string.Empty, "Het gekozen tijdstip is te vroeg.");
+                        return View(modelVM);
+                    }
+
+                    if (DateTime.Parse(model.Appointment.DateTime.AddHours(file.SessionDuration).TimeOfDay.ToString()) > DateTime.Parse(student.Availability.WednesdayEnd))
+                    {
+                        ModelState.AddModelError(string.Empty, "Het gekozen tijdstip is te laat.");
+                        return View(modelVM);
+                    }
+                }
+
+                //if Thursday is chosen
+                if (model.Appointment.DateTime.DayOfWeek.ToString() == "Thursday")
+                {
+                     
+                    if (DateTime.Parse(model.Appointment.DateTime.TimeOfDay.ToString()) < DateTime.Parse(student.Availability.ThursdayStart))
+                    {
+                        ModelState.AddModelError(string.Empty, "Het gekozen tijdstip is te vroeg.");
+                        return View(modelVM);
+                    }
+
+                    if (DateTime.Parse(model.Appointment.DateTime.AddHours(file.SessionDuration).TimeOfDay.ToString()) > DateTime.Parse(student.Availability.ThursdayEnd))
+                    {
+                        ModelState.AddModelError(string.Empty, "Het gekozen tijdstip is te laat.");
+                        return View(modelVM);
+                    }
+                }
+
+                //if Friday is chosen
+                if (model.Appointment.DateTime.DayOfWeek.ToString() == "Friday")
+                {
+                   
+                    if (DateTime.Parse(model.Appointment.DateTime.TimeOfDay.ToString()) < DateTime.Parse(student.Availability.FridayStart))
+                    {
+                        ModelState.AddModelError(string.Empty, "Het gekozen tijdstip is te vroeg.");
+                        return View(modelVM);
+                    }
+
+                    if (DateTime.Parse(model.Appointment.DateTime.AddHours(file.SessionDuration).TimeOfDay.ToString()) > DateTime.Parse(student.Availability.FridayEnd))
+                    {
+                        ModelState.AddModelError(string.Empty, "Het gekozen tijdstip is te laat.");
+                        return View(modelVM);
+                    }
                 }
 
                 //change most props

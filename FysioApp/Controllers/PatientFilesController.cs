@@ -47,29 +47,48 @@ namespace FysioApp.Controllers
         public async Task<IActionResult> Details(int id)
         {
             PatientFile file = await _patientFileRepository.GetFile(id).FirstOrDefaultAsync();
-            List<Comment> comments = await _patientFileRepository.GetCommentsByPatientFileId(id).OrderByDescending(c => c.TimeOfPosting).ToListAsync();
-            List<Treatment> treatments = await _patientFileRepository.GetTreatmentsByPatientFileId(id).OrderByDescending(c => c.DateTime).ToListAsync();
-            DetailsPatientFileViewModel vm = new DetailsPatientFileViewModel()
+            if(file != null)
             {
-                PatientFile = file,
-                Comment = new Comment(),
-                Comments = comments,
-                Treatments = treatments
-            };
-            return View(vm);
+                List<Comment> comments = await _patientFileRepository.GetCommentsByPatientFileId(id).OrderByDescending(c => c.TimeOfPosting).ToListAsync();
+                List<Treatment> treatments = await _patientFileRepository.GetTreatmentsByPatientFileId(id).OrderByDescending(c => c.DateTime).ToListAsync();
+                DetailsPatientFileViewModel vm = new DetailsPatientFileViewModel()
+                {
+                    PatientFile = file,
+                    Comment = new Comment(),
+                    Comments = comments,
+                    Treatments = treatments
+                };
+                return View(vm);
+            } else
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            
         }
 
         public async Task<IActionResult> MyDetails(string id)
         {
-            PatientFile file = await _patientFileRepository.GetFileByPatientId(id).FirstOrDefaultAsync();            
-            List<Comment> comments = await _patientFileRepository.GetCommentsByPatientFileId(file.Id).OrderByDescending(c => c.TimeOfPosting).ToListAsync();
-            DetailsPatientFileViewModel vm = new DetailsPatientFileViewModel()
+            PatientFile file = await _patientFileRepository.GetFileByPatientId(id).FirstOrDefaultAsync();    
+            if(file != null)
             {
-                PatientFile = file,
-                Comment = new Comment(),
-                Comments = comments
-            };
-            return View("Details", vm);
+                List<Comment> comments = await _patientFileRepository.GetCommentsByPatientFileId(file.Id).OrderByDescending(c => c.TimeOfPosting).ToListAsync();
+                List<Treatment> treatments = await _patientFileRepository.GetTreatmentsByPatientFileId(file.Id).OrderByDescending(c => c.DateTime).ToListAsync();
+                DetailsPatientFileViewModel vm = new DetailsPatientFileViewModel()
+                {
+                    PatientFile = file,
+                    Comment = new Comment(),
+                    Comments = comments,
+                    Treatments = treatments
+                };
+
+                return View("Details", vm);
+            } else
+            {                
+                return RedirectToAction("Index", "Home");
+            }
+
+            
+           
         }
 
         public async Task<IActionResult> Edit(int id)

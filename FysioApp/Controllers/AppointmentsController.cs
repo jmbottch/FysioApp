@@ -49,7 +49,7 @@ namespace FysioApp.Controllers
         }
 
         //GET for Index
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             if (User.IsInRole(StaticDetails.PatientEndUser))
             {
@@ -60,7 +60,7 @@ namespace FysioApp.Controllers
 
             }
 
-            return View(_appointmentRepository.GetAppointments().ToListAsync());
+            return View(await _appointmentRepository.GetAppointments().ToListAsync());
         }
 
         //Get for Create

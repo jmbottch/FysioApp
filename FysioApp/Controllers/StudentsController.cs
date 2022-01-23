@@ -19,7 +19,6 @@ namespace FysioApp.Controllers
     {
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly UserManager<IdentityUser> _userManager;
-        private readonly ILogger<RegisterStudentViewModel> _logger;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IStudentRepostitory _studentRepository;
         private readonly IIdentityUserRepository _identityUserRepository;
@@ -121,8 +120,7 @@ namespace FysioApp.Controllers
 
                 var result = await _userManager.CreateAsync(identityStudent, model.Password);
                 if (result.Succeeded)
-                {
-                    _logger.LogInformation("Student has created a new account with password.");
+                {                    
                     if (!await _roleManager.RoleExistsAsync(StaticDetails.TeacherEndUser))
                     {
                         await _roleManager.CreateAsync(new IdentityRole(StaticDetails.TeacherEndUser));

@@ -22,7 +22,7 @@ namespace TestProject.Controllers
         Testhelper helper = new Testhelper();
 
         [Fact]
-        public void Create_Patient_Returns_Error_When_Patient_Is_Younger_Than_Sixteen()
+        public async void Create_Patient_Returns_Error_When_Patient_Is_Younger_Than_Sixteen()
         {            
 
             var user = new ClaimsPrincipal(
@@ -53,7 +53,7 @@ namespace TestProject.Controllers
             sut.ControllerContext = new ControllerContext();
             sut.ControllerContext.HttpContext = new DefaultHttpContext { User = user };
 
-            sut.Create(model);
+            await sut.Create(model);
 
             var result = patientRepo.GetPatients().ToList().Count();
 

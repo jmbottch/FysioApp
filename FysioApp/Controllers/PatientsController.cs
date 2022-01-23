@@ -106,7 +106,7 @@ namespace FysioApp.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = StaticDetails.TeacherEndUser)]
-        public IActionResult Create(RegisterPatientViewModel model)
+        public async Task<IActionResult> Create(RegisterPatientViewModel model)
         {
             if (ModelState.IsValid)
             {

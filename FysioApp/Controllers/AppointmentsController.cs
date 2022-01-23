@@ -381,7 +381,11 @@ namespace FysioApp.Controllers
 
             if (ModelState.IsValid)
             {
-
+                if(model.Appointment.DateTime < DateTime.Now)
+                {
+                    ModelState.AddModelError(string.Empty, "Datum moet in de toekomst liggen"); // if not return with error
+                    return View(modelVM);
+                }
 
                 Appointment appointmentFromDb = await _appointmentRepository.GetAppointment(model.Appointment.Id).FirstOrDefaultAsync();
                 if (appointmentFromDb == null)

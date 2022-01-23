@@ -302,8 +302,8 @@ namespace TestProject.Controllers
                 Id = 9,
                 PatientId = "a",
                 StudentId = "b",
-                DateTime = DateTime.Now.Date.AddHours(14), //this is a valid datetime.
-                EndTime = DateTime.Now.Date.AddHours(15),
+                DateTime = DateTime.Now.Date.AddDays(25), //this is a valid datetime.
+                EndTime = DateTime.Now.Date.AddDays(25),
                 IsCancelled = false
             };
 
@@ -320,7 +320,7 @@ namespace TestProject.Controllers
             var result = foundAppointment.IsCancelled;
 
             //assert IsCancelled for the appointment is still false
-            Assert.False(result);
+            Assert.True(result);
 
         }
 
